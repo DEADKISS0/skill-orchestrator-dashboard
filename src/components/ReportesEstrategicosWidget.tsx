@@ -1,33 +1,30 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-interface ReportEntry {
+interface EstrategicoEntry {
   date: string;
   label?: string;
   pdf: string;
   excel: string;
   summary?: {
-    total_changes?: number;
-    trends?: number;
-    anomalies?: number;
-    risks?: number;
-    opportunities?: number;
-    next_actions?: number;
+    progreso?: string;
+    acciones?: number;
+    urgentes?: number;
   };
 }
 
-export default function MiroFishReportsWidget() {
-  const [reports, setReports] = useState<ReportEntry[]>([]);
-  const [selectedReport, setSelectedReport] = useState<ReportEntry | null>(null);
+export default function ReportesEstrategicosWidget() {
+  const [reports, setReports] = useState<EstrategicoEntry[]>([]);
+  const [selectedReport, setSelectedReport] = useState<EstrategicoEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchReports = useCallback(() => {
-    fetch("/reports/predicciones_index.json")
+    fetch("/reports/estrategicos_index.json")
       .then((r) => r.json())
       .then((data) => {
-        const list: ReportEntry[] = data.reports || [];
+        const list: EstrategicoEntry[] = data.reports || [];
         setReports(list);
         if (list.length > 0) setSelectedReport(list[0]);
         setLastUpdate(new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }));
@@ -36,8 +33,8 @@ export default function MiroFishReportsWidget() {
         if (reports.length === 0) {
           setSelectedReport({
             date: new Date().toISOString().slice(0, 10),
-            pdf: "/reports/Reporte_Prediccion_Ultimo.pdf",
-            excel: "/reports/Reporte_Prediccion_Ultimo.xlsx",
+            pdf: "/reports/Reporte_Optimizacion_Ultimo.pdf",
+            excel: "/reports/Reporte_Optimizacion_Ultimo.xlsx",
           });
         }
       })
@@ -50,10 +47,9 @@ export default function MiroFishReportsWidget() {
     return () => clearInterval(interval);
   }, [refreshKey]);
 
-  // --- loading state ---
   if (loading && reports.length === 0) {
     return (
-      <div className="card p-4 animate-in" id="mirofish-reports">
+      <div className="card p-4 animate-in" id="estrategia">
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Cargando reportes...</h3>
       </div>
     );
@@ -63,9 +59,9 @@ export default function MiroFishReportsWidget() {
     <div className="card p-4 animate-in col-span-2">
       {/* header */}
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">📊</span>
+        <span className="text-lg">🎯</span>
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-          Reportes de Predicciones — MiroFish-Lite
+          Reportes de Optimización Estratégica
         </h3>
         <span className="skill-badge active">{reports.length} reportes</span>
         <button
@@ -111,7 +107,7 @@ export default function MiroFishReportsWidget() {
                     borderColor: "var(--border)",
                     background: "var(--bg-secondary)",
                   }}
-                  title="Reporte PDF"
+                  title="Reporte Estratégico PDF"
                 />
               )}
             </div>
@@ -135,14 +131,11 @@ export default function MiroFishReportsWidget() {
 
           {/* KPIs */}
           {selectedReport.summary && (
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {[
-                { label: "Cambios", value: selectedReport.summary.total_changes, color: "var(--accent)" },
-                { label: "Tendencias", value: selectedReport.summary.trends, color: "var(--warning)" },
-                { label: "Anomalías", value: selectedReport.summary.anomalies, color: "var(--danger)" },
-                { label: "Riesgos", value: selectedReport.summary.risks, color: "var(--danger)" },
-                { label: "Oportunidades", value: selectedReport.summary.opportunities, color: "var(--success)" },
-                { label: "Acciones", value: selectedReport.summary.next_actions, color: "var(--accent)" },
+                { label: "Progreso", value: selectedReport.summary.progreso, color: "var(--accent)" },
+                { label: "Acciones", value: selectedReport.summary.acciones, color: "var(--warning)" },
+                { label: "Urgentes", value: selectedReport.summary.urgentes, color: "var(--danger)" },
               ].map((m) => (
                 <div key={m.label} className="p-2 rounded text-center" style={{ background: "var(--bg-secondary)" }}>
                   <div className="text-lg font-bold" style={{ color: m.color }}>
@@ -161,7 +154,7 @@ export default function MiroFishReportsWidget() {
       {/* empty state */}
       {!selectedReport && (
         <div className="p-8 text-center" style={{ color: "var(--text-muted)" }}>
-          <p className="text-sm">No hay reportes generados aún.</p>
+          <p className="text-sm">No hay reportes estratégicos generados aún.</p>
           <p className="text-xs mt-1">El bot genera reportes automáticamente a las 05:00 y 17:00.</p>
         </div>
       )}

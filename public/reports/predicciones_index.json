@@ -1,0 +1,130 @@
+{
+  "reports": [
+    {
+      "date": "2026-07-16_1058",
+      "label": "2026-07-16 10:58",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-16_1058.pdf",
+      "excel": "/reports/Reporte_Prediccion_2026-07-16_1058.xlsx",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    },
+    {
+      "date": "2026-07-15_0643",
+      "label": "2026-07-15 06:43",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-15_0643.pdf",
+      "excel": "/reports/Reporte_Prediccion_2026-07-15_0643.xlsx",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 2,
+        "opportunities": 2,
+        "next_actions": 3
+      }
+    },
+    {
+      "date": "2026-07-14_1804",
+      "label": "2026-07-14 18:04",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-14_1804.pdf",
+      "excel": "/reports/Reporte_Prediccion_2026-07-14_1804.xlsx",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    },
+    {
+      "date": "2026-07-14_0544",
+      "label": "2026-07-14 05:44",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-14_0544.pdf",
+      "excel": "/reports/Reporte_Prediccion_2026-07-14_0544.xlsx",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    },
+    {
+      "date": "2026-07-14_0527",
+      "label": "2026-07-14 05:27",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-14_0527.pdf",
+      "excel": "/reports/Reporte_Prediccion_2026-07-14_0527.xlsx",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    },
+    {
+      "date": "2026-07-14_0503",
+      "label": "2026-07-14 05:03",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-14_0503.pdf",
+      "excel": "",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    },
+    {
+      "date": "2026-07-14_0435",
+      "label": "2026-07-14 04:35",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-14_0435.pdf",
+      "excel": "",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    },
+    {
+      "date": "2026-07-13_2138",
+      "label": "2026-07-13 21:38",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-13_2138.pdf",
+      "excel": "",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 2,
+        "opportunities": 2,
+        "next_actions": 3
+      }
+    },
+    {
+      "date": "2026-07-13_2124",
+      "label": "2026-07-13 21:24",
+      "pdf": "/reports/Reporte_Prediccion_2026-07-13_2124.pdf",
+      "excel": "",
+      "summary": {
+        "total_changes": 108,
+        "trends": 3,
+        "anomalies": 0,
+        "risks": 1,
+        "opportunities": 0,
+        "next_actions": 0
+      }
+    }
+  ]
+}
