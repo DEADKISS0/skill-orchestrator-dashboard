@@ -19,6 +19,17 @@ export interface SalesMetric {
 
 export const deals: Deal[] = [
   {
+    id: "wuunder",
+    name: "Wuunder",
+    status: "negociacion",
+    value: "$36M-$42M COP",
+    monthlyFee: "$6M-$7M/mes",
+    probability: "media",
+    timeline: "6 meses",
+    nextStep: "Decisión de firma — deadline 2 semanas (Jul 2026)",
+    priority: "critico",
+  },
+  {
     id: "real-seguros",
     name: "Real Seguros",
     status: "pre-contrato",
@@ -54,9 +65,9 @@ export const deals: Deal[] = [
 ];
 
 export const salesMetrics: SalesMetric[] = [
-  { label: "Pipeline Total", value: "$110M COP", icon: "💰", color: "var(--success)" },
-  { label: "Prospectos Activos", value: "3", icon: "🎯", color: "var(--accent)" },
-  { label: "Mejor Caso Mes 1", value: "$23.1M", icon: "📈", color: "var(--warning)" },
+  { label: "Pipeline Total", value: "$129M+ COP", icon: "💰", color: "var(--success)" },
+  { label: "Prospectos Activos", value: "4", icon: "🎯", color: "var(--ember)" },
+  { label: "Prioridad #1", value: "Wuunder", icon: "🔥", color: "var(--ember)" },
   { label: "Clientes Activos", value: "0", icon: "👥", color: "var(--danger)" },
 ];
 

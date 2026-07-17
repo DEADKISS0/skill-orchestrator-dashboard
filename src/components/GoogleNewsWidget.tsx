@@ -15,8 +15,9 @@ export default function GoogleNewsWidget() {
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">📰</span>
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Google News Monitor</h3>
-        <span className="skill-badge active">google-news-monitor</span>
+        <span className="skill-badge demo">Demo</span>
       </div>
+      <div className="banner-mock mb-3">Noticias de ejemplo. Conectar google-news-monitor para datos en vivo.</div>
       <div className="flex gap-2 mb-3">
         {["tecnología", "IA", "negocios"].map((f) => (
           <button key={f} className="text-xs px-3 py-1 rounded-full transition-colors"

@@ -1,0 +1,10 @@
+{
+  "name": "RR ALIADOS Mega Dashboard",
+  "short_name": "Mega Dashboard",
+  "description": "Centro de comando RR ALIADOS — Con las manos en el fuego.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F0F0F",
+  "theme_color": "#CE3D1F",
+  "lang": "es"
+}

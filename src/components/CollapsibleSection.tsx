@@ -1,31 +1,64 @@
 "use client";
-import { useState, ReactNode } from "react";
+import { useState, useEffect, ReactNode } from "react";
 
 interface Props {
   title: string;
   icon: string;
+  sectionId: string;
   defaultOpen?: boolean;
   children: ReactNode;
 }
 
-export default function CollapsibleSection({ title, icon, defaultOpen = false, children }: Props) {
+export default function CollapsibleSection({
+  title,
+  icon,
+  sectionId,
+  defaultOpen = false,
+  children,
+}: Props) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ sectionId?: string }>).detail;
+      if (detail?.sectionId === sectionId) {
+        setIsOpen(true);
+      }
+    };
+    window.addEventListener("dashboard-nav", handler);
+    return () => window.removeEventListener("dashboard-nav", handler);
+  }, [sectionId]);
+
   return (
-    <div className="col-span-full">
+    <div id={sectionId} className="col-12 section-zone">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:bg-white/5"
-        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+        className="w-full flex items-center gap-3 px-5 py-3.5 rounded-xl transition-all hover:border-[var(--border-accent)] group"
+        style={{
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border)",
+        }}
       >
-        <span className="text-sm">{icon}</span>
-        <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{title}</span>
-        <span className="ml-auto text-[10px]" style={{ color: "var(--text-muted)" }}>
-          {isOpen ? "▼ Cerrar" : "▶ Abrir"}
+        <span className="text-lg">{icon}</span>
+        <span
+          className="font-display text-sm tracking-widest group-hover:text-[var(--ember-light)] transition-colors"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {title}
+        </span>
+        <span
+          className="ml-auto font-mono-label px-2.5 py-1 rounded-md transition-colors"
+          style={{
+            color: isOpen ? "var(--ember-light)" : "var(--text-muted)",
+            background: isOpen ? "var(--ember-10)" : "var(--bg-elevated)",
+            border: "1px solid var(--border-subtle)",
+          }}
+        >
+          {isOpen ? "Cerrar" : "Expandir"}
         </span>
       </button>
       {isOpen && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 animate-in">
           {children}
         </div>
       )}

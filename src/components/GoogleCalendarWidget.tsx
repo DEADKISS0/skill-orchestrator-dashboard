@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import WidgetCard from "@/components/ui/WidgetCard";
 
 interface CalendarEvent {
   id: string;
@@ -45,34 +46,36 @@ export default function GoogleCalendarWidget() {
 
   if (loading) {
     return (
-      <div className="card p-4 animate-in">
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Cargando calendario...</h3>
-      </div>
+      <WidgetCard title="Google Calendar" icon="📅">
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>Cargando calendario...</p>
+      </WidgetCard>
     );
   }
 
   if (!data) return null;
 
   return (
-    <div className="card p-4 animate-in">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">📅</span>
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Google Calendar</h3>
-        <span className="skill-badge support">Próximos</span>
+    <WidgetCard
+      title="Google Calendar"
+      icon="📅"
+      badge="Próximos"
+      badgeVariant="support"
+      action={
         <button
-          onClick={() => setRefreshKey(k => k + 1)}
-          className="ml-auto text-xs px-2 py-1 rounded transition-colors hover:bg-white/10"
-          style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}
+          onClick={() => setRefreshKey((k) => k + 1)}
+          className="btn-ghost !py-1 !px-2"
           title="Actualizar"
         >
           ↻
         </button>
-      </div>
+      }
+    >
 
       {/* Warning if simulated */}
       {!data.configured && (
-        <div className="mb-3 p-2 rounded text-[11px]" style={{ background: "rgba(245,158,11,0.1)", color: "var(--warning)", border: "1px solid rgba(245,158,11,0.3)" }}>
-          ⚠️ Datos simulados. Configura GOOGLE_CALENDAR_CLIENT_ID y GOOGLE_CALENDAR_CLIENT_SECRET en .env.local para datos reales.
+        <div className="banner-mock mb-3 flex items-center justify-between gap-2">
+          <span>⚠️ DEMO — Eventos simulados</span>
+          <span className="skill-badge demo">Mock</span>
         </div>
       )}
 
@@ -135,6 +138,6 @@ export default function GoogleCalendarWidget() {
           Última actualización: {lastUpdate}
         </div>
       )}
-    </div>
+    </WidgetCard>
   );
 }

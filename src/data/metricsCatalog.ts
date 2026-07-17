@@ -1,3 +1,5 @@
+import { getBusinessContext } from "./businessContext";
+
 export interface Metric {
   id: string;
   label: string;
@@ -9,17 +11,25 @@ export interface Metric {
   trendValue?: string;
 }
 
-export function getMetrics(predictionReports: number, strategicReports: number, installedSkills: number, totalSkills: number): Metric[] {
+export function getMetrics(
+  predictionReports: number,
+  strategicReports: number,
+  installedSkills: number,
+  totalSkills: number,
+  optimizationReports = 0
+): Metric[] {
+  const ctx = getBusinessContext();
+
   return [
     {
       id: "reports",
       label: "Reportes Totales",
       icon: "📊",
-      value: predictionReports + strategicReports,
-      subtitle: `${predictionReports} predicción · ${strategicReports} estratégicos`,
-      color: "var(--accent)",
-      trend: "up",
-      trendValue: `+${predictionReports} esta semana`,
+      value: predictionReports + strategicReports + optimizationReports,
+      subtitle: `${predictionReports} pred · ${strategicReports} estr · ${optimizationReports} opt`,
+      color: "var(--ember)",
+      trend: predictionReports > 0 ? "up" : "stable",
+      trendValue: predictionReports > 0 ? `${predictionReports} predicciones` : "Sin nuevos",
     },
     {
       id: "skills",
@@ -27,46 +37,48 @@ export function getMetrics(predictionReports: number, strategicReports: number, 
       icon: "⚡",
       value: `${installedSkills}/${totalSkills}`,
       subtitle: `${((installedSkills / totalSkills) * 100).toFixed(1)}% del catálogo`,
-      color: "var(--success)",
-      trend: "up",
-      trendValue: "+2 esta semana",
+      color: installedSkills === 36 ? "var(--success)" : "var(--warning)",
+      trend: installedSkills === 36 ? "stable" : "down",
+      trendValue: installedSkills === 36 ? "Sincronizado" : "Ejecutar sync_skills.py",
     },
     {
-      id: "progress",
-      label: "Meta 5-Year",
+      id: "clients",
+      label: "Meta Q3 Clientes",
       icon: "🎯",
-      value: "15%",
-      subtitle: "Progreso hacia meta",
-      color: "var(--warning)",
-      trend: "up",
-      trendValue: "+5% vs mes anterior",
+      value: `${ctx.clientsClosed}/${ctx.clientsTargetQ3}`,
+      subtitle: "Objetivo supervivencia 2026",
+      color: "var(--ember-light)",
+      trend: ctx.clientsClosed > 0 ? "up" : "stable",
+      trendValue: ctx.wuunderDaysLeft <= 14 ? `Wuunder: ${ctx.wuunderDaysLeft}d` : "En negociación",
     },
     {
-      id: "urgent",
-      label: "Acciones Urgentes",
-      icon: "🔴",
-      value: 4,
-      subtitle: "Requieren atención esta semana",
-      color: "var(--danger)",
-      trend: "down",
-      trendValue: "-2 vs semana anterior",
+      id: "runway",
+      label: "Runway",
+      icon: "💰",
+      value: `${ctx.runwayDays}d`,
+      subtitle: "Días de caja restantes",
+      color: ctx.runwayDays < 90 ? "var(--danger)" : "var(--success)",
+      trend: ctx.runwayDays < 90 ? "down" : "stable",
+      trendValue: `Burn ~$450K/mes`,
     },
     {
       id: "apps",
       label: "Apps Integradas",
       icon: "🔗",
-      value: 7,
-      subtitle: "Company Hub, Cotizador, etc.",
-      color: "var(--accent)",
+      value: 6,
+      subtitle: "Ecosistema RR ALIADOS",
+      color: "var(--ember)",
       trend: "stable",
     },
     {
-      id: "last-report",
-      label: "Último Reporte",
-      icon: "🕐",
-      value: "Hoy",
-      subtitle: "Hace 2 horas",
-      color: "var(--success)",
+      id: "pipeline",
+      label: "Pipeline",
+      icon: "🔥",
+      value: "Wuunder",
+      subtitle: "Prioridad #1 — negociación activa",
+      color: "var(--ember-light)",
+      trend: "up",
+      trendValue: `$36M-$42M COP`,
     },
   ];
 }

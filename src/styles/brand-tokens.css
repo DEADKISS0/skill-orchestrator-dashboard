@@ -1,0 +1,102 @@
+/* RR ALIADOS — Brand Kit tokens (Brutalismo Estratégico Colombiano) */
+
+:root {
+  /* Core palette */
+  --pitch: #0F0F0F;
+  --void: #3F0035;
+  --ember: #CE3D1F;
+  --ember-dark: #B8351A;
+  --ember-light: #E85A3A;
+  --parchment: #F5E6D3;
+  --ash: #968E93;
+
+  /* Opacity variants */
+  --ember-10: rgba(206, 61, 31, 0.1);
+  --ember-20: rgba(206, 61, 31, 0.2);
+  --ember-30: rgba(206, 61, 31, 0.3);
+  --ember-60: rgba(206, 61, 31, 0.6);
+  --parchment-5: rgba(245, 230, 211, 0.05);
+  --parchment-10: rgba(245, 230, 211, 0.1);
+  --parchment-15: rgba(245, 230, 211, 0.15);
+  --parchment-30: rgba(245, 230, 211, 0.3);
+  --parchment-50: rgba(245, 230, 211, 0.5);
+  --parchment-70: rgba(245, 230, 211, 0.7);
+  --void-30: rgba(63, 0, 53, 0.3);
+  --void-50: rgba(63, 0, 53, 0.5);
+  --void-95: rgba(63, 0, 53, 0.95);
+  --pitch-80: rgba(15, 15, 15, 0.8);
+  --pitch-95: rgba(15, 15, 15, 0.95);
+
+  /* Shadows & glow */
+  --shadow-ember: 0 0 30px rgba(206, 61, 31, 0.4);
+  --shadow-ember-sm: 0 0 15px rgba(206, 61, 31, 0.3);
+  --shadow-dark: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --shadow-inset: inset 0 1px 0 rgba(245, 230, 211, 0.06);
+
+  /* Spacing rhythm */
+  --page-x: clamp(1.25rem, 4vw, 2.5rem);
+  --section-y: clamp(2rem, 5vh, 3.5rem);
+  --grid-gap: 1.25rem;
+  --grid-gap-lg: 1.5rem;
+  --max-width: 1440px;
+  --sidebar-width: 15rem;
+  --header-height: 4rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Typography */
+  --font-display: var(--font-bebas-neue), sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.25s ease;
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Semantic aliases (dark default) */
+  --bg-primary: var(--pitch);
+  --bg-secondary: #141414;
+  --bg-elevated: #1A1A1A;
+  --bg-card: rgba(63, 0, 53, 0.22);
+  --bg-card-hover: rgba(63, 0, 53, 0.38);
+  --bg-glass: rgba(15, 15, 15, 0.72);
+  --accent: var(--ember);
+  --accent-glow: var(--ember-light);
+  --text-primary: var(--parchment);
+  --text-secondary: var(--ash);
+  --text-muted: rgba(150, 142, 147, 0.75);
+  --border: rgba(206, 61, 31, 0.15);
+  --border-subtle: rgba(245, 230, 211, 0.06);
+  --border-accent: var(--ember-30);
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  /* Ambient mesh */
+  --mesh-ember: radial-gradient(ellipse 80% 60% at 85% 10%, rgba(206, 61, 31, 0.12) 0%, transparent 60%);
+  --mesh-void: radial-gradient(ellipse 60% 50% at 10% 90%, rgba(63, 0, 53, 0.18) 0%, transparent 55%);
+}
+
+[data-theme="light"] {
+  --bg-primary: #F8F0E4;
+  --bg-secondary: #FFFFFF;
+  --bg-elevated: #F5EBDD;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: #F0E4D4;
+  --bg-glass: rgba(248, 240, 228, 0.88);
+  --text-primary: var(--pitch);
+  --text-secondary: #5C534F;
+  --text-muted: #7A6F66;
+  --border: rgba(15, 15, 15, 0.08);
+  --border-subtle: rgba(15, 15, 15, 0.05);
+  --border-accent: rgba(206, 61, 31, 0.22);
+  --mesh-ember: radial-gradient(ellipse 80% 60% at 85% 10%, rgba(206, 61, 31, 0.06) 0%, transparent 60%);
+  --mesh-void: radial-gradient(ellipse 60% 50% at 10% 90%, rgba(63, 0, 53, 0.05) 0%, transparent 55%);
+  --shadow-card: 0 4px 24px rgba(15, 15, 15, 0.08);
+}

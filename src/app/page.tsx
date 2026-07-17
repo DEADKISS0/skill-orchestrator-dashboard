@@ -4,6 +4,9 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
+import DashboardBackground from "@/components/DashboardBackground";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { useActiveWidgetHighlight } from "@/hooks/useActiveWidgetHighlight";
 import BusinessMetricsWidget from "@/components/BusinessMetricsWidget";
 import CalendarWidget from "@/components/CalendarWidget";
 import TaskMonitorWidget from "@/components/TaskMonitorWidget";
@@ -50,150 +53,199 @@ import ConsultaContextoWidget from "@/components/ConsultaContextoWidget";
 import SkillsCatalogWidget from "@/components/SkillsCatalogWidget";
 import MiroFishReportsWidget from "@/components/MiroFishReportsWidget";
 import ReportesEstrategicosWidget from "@/components/ReportesEstrategicosWidget";
+import OptimizacionWidget from "@/components/OptimizacionWidget";
 import SalesPipelineWidget from "@/components/SalesPipelineWidget";
 import FinancialHealthWidget from "@/components/FinancialHealthWidget";
 import ClientStatusWidget from "@/components/ClientStatusWidget";
 import CompetitorWidget from "@/components/CompetitorWidget";
 import ExternalAppWidget from "@/components/ExternalAppWidget";
+import Meta5YearWidget from "@/components/Meta5YearWidget";
+import AutomationHealthWidget from "@/components/AutomationHealthWidget";
 
 export default function Home() {
   const [activeWidget, setActiveWidget] = useState("All");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const sectionId = (name: string) =>
-    name.toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9-]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
+  useActiveWidgetHighlight(activeWidget);
 
   return (
-    <div className="flex flex-col h-screen" style={{background:"var(--bg-primary)"}}>
+    <div className="flex flex-col h-screen relative" style={{ background: "var(--bg-primary)" }}>
+      <DashboardBackground />
       <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar activeWidget={activeWidget} onSelect={setActiveWidget} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="flex-1 overflow-y-auto p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="flex flex-1 overflow-hidden relative z-10">
+        <Sidebar
+          activeWidget={activeWidget}
+          onSelect={setActiveWidget}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+        <main
+          className="flex-1 overflow-y-auto py-6"
+          style={{ paddingLeft: "var(--page-x)", paddingRight: "var(--page-x)" }}
+        >
+          <div className="dashboard-grid">
 
-            {/* ═══════════════════════════════════════════════════════════
-                SECCIÓN 1: HERO + REPORTES + APLICACIONES (PRINCIPAL)
-               ═══════════════════════════════════════════════════════════ */}
+            {/* Zona 1 — Command Center */}
+            <HeroSection />
+            <div id="business-metrics" className="col-12">
+              <BusinessMetricsWidget />
+            </div>
+            <div className="col-12">
+              <Meta5YearWidget />
+            </div>
 
-            {/* Hero Section */}
-            <section className="md:col-span-2 lg:col-span-3 xl:col-span-4">
-              <HeroSection />
-            </section>
+            <div className="section-divider" />
 
-            {/* Business Metrics */}
-            <BusinessMetricsWidget />
-
-            {/* Sales Pipeline + Financial Health (2 cols each) */}
-            <SalesPipelineWidget />
-            <FinancialHealthWidget />
-
-            {/* Calendar + Task Monitor + Command Center + Export (4 cols) */}
-            <CalendarWidget />
-            <TaskMonitorWidget />
-            <CommandCenterWidget />
-            <ExportWidget />
-
-            {/* Google Analytics + Google Calendar (2 cols each) */}
-            <GoogleAnalyticsWidget />
-            <GoogleCalendarWidget />
-
-            {/* Reports */}
-            <section id={sectionId("MiroFish Reports")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
+            {/* Zona 2 — Inteligencia IA */}
+            <SectionHeader number="01" title="Inteligencia IA" subtitle="Reportes generados por MiroFish-Lite" />
+            <div id="mirofish-reports" className="col-4">
               <MiroFishReportsWidget />
-            </section>
-            <section id={sectionId("Estrategia")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
+            </div>
+            <div id="optimizacion" className="col-4">
+              <OptimizacionWidget />
+            </div>
+            <div id="estrategia" className="col-4">
               <ReportesEstrategicosWidget />
-            </section>
+            </div>
 
-            {/* Aplicaciones Corporativas */}
-            <section id={sectionId("Company Hub")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
-              <ExternalAppWidget title="Company Hub" url="https://x3hlysjfyb4ta.kimi.page/" icon="🏢" />
-            </section>
-            <section id={sectionId("Cotizador")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
-              <ExternalAppWidget title="RR Cotizador" url="https://rr-kotizador.vercel.app/" icon="🧮" />
-            </section>
-            <section id={sectionId("Altruismo")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
-              <ExternalAppWidget title="Altruismo" url="https://altruismo-web.vercel.app/es" icon="🤝" />
-            </section>
-            <section id={sectionId("Skills Hub App")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
-              <ExternalAppWidget title="RR Skills Hub" url="https://yvapiyrswankg.kimi.page/" icon="📚" />
-            </section>
-            <section id={sectionId("Adquisición")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
-              <ExternalAppWidget title="Dashboard de Adquisición" url="https://3mpm6kcgvmpz4.kimi.page/#panel" icon="📈" />
-            </section>
-            <section id={sectionId("DashWeb")} className="md:col-span-2 lg:col-span-2 xl:col-span-2">
-              <ExternalAppWidget title="DashWeb Core" url="https://dashweb-core-frontend-beta.up.railway.app/login" icon="🔧" />
-            </section>
+            <div className="section-divider" />
 
-            {/* Client Status + Competitor (2 cols each) */}
-            <ClientStatusWidget />
-            <CompetitorWidget />
+            {/* Zona 3 — Negocio */}
+            <SectionHeader number="02" title="Negocio" subtitle="Pipeline comercial y salud financiera" />
+            <div id="sales-pipeline" className="col-6">
+              <SalesPipelineWidget />
+            </div>
+            <div id="financial-health" className="col-6">
+              <FinancialHealthWidget />
+            </div>
 
-            {/* Catálogo de Skills */}
-            <section id={sectionId("Skills Catalog")} className="md:col-span-2 lg:col-span-3 xl:col-span-4">
+            <div className="section-divider" />
+
+            {/* Zona 4 — Operaciones */}
+            <SectionHeader number="03" title="Operaciones" subtitle="Calendario, tareas y exportación" />
+            <div id="calendar-widget" className="col-3">
+              <CalendarWidget />
+            </div>
+            <div id="task-monitor" className="col-3">
+              <TaskMonitorWidget />
+            </div>
+            <div id="command-center" className="col-3">
+              <CommandCenterWidget />
+            </div>
+            <div id="export-widget" className="col-3">
+              <ExportWidget />
+            </div>
+            <div id="automation-health" className="col-12">
+              <AutomationHealthWidget />
+            </div>
+
+            <div className="section-divider" />
+
+            {/* Zona 5 — Growth */}
+            <SectionHeader number="04" title="Growth" subtitle="Analytics, clientes y competencia" />
+            <div id="google-analytics" className="col-3">
+              <GoogleAnalyticsWidget />
+            </div>
+            <div id="google-calendar" className="col-3">
+              <GoogleCalendarWidget />
+            </div>
+            <div id="client-status" className="col-3">
+              <ClientStatusWidget />
+            </div>
+            <div id="competitor-intel" className="col-3">
+              <CompetitorWidget />
+            </div>
+
+            <div className="section-divider" />
+
+            {/* Zona 6 — Ecosistema */}
+            <SectionHeader number="05" title="Ecosistema" subtitle="Apps corporativas integradas" />
+            <div className="col-12">
+              <div className="apps-grid">
+                <div id="company-hub">
+                  <ExternalAppWidget title="Company Hub" url="https://x3hlysjfyb4ta.kimi.page/" icon="🏢" />
+                </div>
+                <div id="cotizador">
+                  <ExternalAppWidget title="RR Cotizador" url="https://rr-kotizador.vercel.app/" icon="🧮" />
+                </div>
+                <div id="altruismo">
+                  <ExternalAppWidget title="Altruismo" url="https://altruismo-web.vercel.app/es" icon="🤝" />
+                </div>
+                <div id="skills-hub-app">
+                  <ExternalAppWidget title="RR Skills Hub" url="https://yvapiyrswankg.kimi.page/" icon="📚" />
+                </div>
+                <div id="adquisicion">
+                  <ExternalAppWidget title="Dashboard de Adquisición" url="https://3mpm6kcgvmpz4.kimi.page/#panel" icon="📈" />
+                </div>
+                <div id="dashweb">
+                  <ExternalAppWidget title="DashWeb Core" url="https://dashweb-core-frontend-beta.up.railway.app/login" icon="🔧" />
+                </div>
+              </div>
+            </div>
+
+            <div className="section-divider" />
+
+            <SectionHeader
+              number="06"
+              title="Skills"
+              subtitle={activeWidget === "All" ? "Catálogo completo de skills instaladas" : `Vista: ${activeWidget}`}
+            />
+            <div id="skills-catalog" className="col-12" data-internal-only>
               <SkillsCatalogWidget />
-            </section>
+            </div>
 
-            {/* ═══════════════════════════════════════════════════════════
-                SECCIÓN 2: HERRAMIENTAS (COMPACTADAS)
-               ═══════════════════════════════════════════════════════════ */}
-
-            <CollapsibleSection title="DATA & ANALYTICS" icon="📊" defaultOpen={false}>
-              <ExcelWidget />
-              <GoogleNewsWidget />
-              <GoogleMapsWidget />
-              <AmazonWidget />
-              <MetricoolWidget />
+            <div data-internal-only>
+            <CollapsibleSection title="DATA & ANALYTICS" icon="📊" sectionId="data-analytics" defaultOpen={false}>
+              <div id="excel-widget"><ExcelWidget /></div>
+              <div id="google-news"><GoogleNewsWidget /></div>
+              <div id="google-maps"><GoogleMapsWidget /></div>
+              <div id="amazon-analyzer"><AmazonWidget /></div>
+              <div id="metricool"><MetricoolWidget /></div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="RESEARCH" icon="🔍" defaultOpen={false}>
-              <WebResearchWidget />
-              <FirecrawlWidget />
-              <NotebookLMWidget />
+            <CollapsibleSection title="RESEARCH" icon="🔍" sectionId="research" defaultOpen={false}>
+              <div id="web-research"><WebResearchWidget /></div>
+              <div id="firecrawl"><FirecrawlWidget /></div>
+              <div id="notebooklm"><NotebookLMWidget /></div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="DEV & QA" icon="⚙️" defaultOpen={false}>
-              <KarpathyWidget />
-              <DebuggingWidget />
-              <VerificationWidget />
-              <QAAuditorWidget />
-              <LoopModeWidget />
-              <QualityLoopWidget />
+            <CollapsibleSection title="DEV & QA" icon="⚙️" sectionId="dev-qa" defaultOpen={false}>
+              <div id="karpathy-rules"><KarpathyWidget /></div>
+              <div id="debugging"><DebuggingWidget /></div>
+              <div id="verification"><VerificationWidget /></div>
+              <div id="qa-auditor"><QAAuditorWidget /></div>
+              <div id="loop-mode"><LoopModeWidget /></div>
+              <div id="quality-loop"><QualityLoopWidget /></div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="CONTENT" icon="✍️" defaultOpen={false}>
-              <XPublisherWidget />
-              <YouTubeClipperWidget />
-              <RemotionWidget />
-              <CronogramaWidget />
+            <CollapsibleSection title="CONTENT" icon="✍️" sectionId="content" defaultOpen={false}>
+              <div id="x-publisher"><XPublisherWidget /></div>
+              <div id="youtube-clip"><YouTubeClipperWidget /></div>
+              <div id="remotion"><RemotionWidget /></div>
+              <div id="cronograma"><CronogramaWidget /></div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="STRATEGY" icon="🎯" defaultOpen={false}>
-              <BrainstormingWidget />
-              <GrillMeWidget />
-              <WritingPlansWidget />
-              <BenchmarkingWidget />
-              <InterfaceDesigningWidget />
+            <CollapsibleSection title="STRATEGY" icon="🎯" sectionId="strategy" defaultOpen={false}>
+              <div id="brainstorming"><BrainstormingWidget /></div>
+              <div id="grill-me"><GrillMeWidget /></div>
+              <div id="writing-plans"><WritingPlansWidget /></div>
+              <div id="benchmarking"><BenchmarkingWidget /></div>
+              <div id="interface-designing"><InterfaceDesigningWidget /></div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="META / SKILLS" icon="🧠" defaultOpen={false}>
-              <FindSkillsWidget />
-              <SkillBuilderWidget />
-              <SkillCreatorWidget />
-              <SkillFromMastersWidget />
-              <SkillInstallerWidget />
-              <MCPWidget />
-              <MultiAgentWidget />
-              <ConsultaContextoWidget />
-              <SuperpowersWidget />
-              <SkillOrchestratorWidget />
-              <WarpgrepsWidget />
+            <CollapsibleSection title="META / SKILLS" icon="🧠" sectionId="meta-skills" defaultOpen={false}>
+              <div id="find-skills"><FindSkillsWidget /></div>
+              <div id="skill-builder"><SkillBuilderWidget /></div>
+              <div id="skill-creator"><SkillCreatorWidget /></div>
+              <div id="masters"><SkillFromMastersWidget /></div>
+              <div id="installer"><SkillInstallerWidget /></div>
+              <div id="mcp"><MCPWidget /></div>
+              <div id="a2a"><MultiAgentWidget /></div>
+              <div id="consulta"><ConsultaContextoWidget /></div>
+              <div id="superpowers"><SuperpowersWidget /></div>
+              <div id="orchestrator"><SkillOrchestratorWidget /></div>
+              <div id="warpgrep"><WarpgrepsWidget /></div>
             </CollapsibleSection>
+            </div>
 
           </div>
         </main>

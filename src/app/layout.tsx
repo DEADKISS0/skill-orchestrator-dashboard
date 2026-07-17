@@ -1,21 +1,33 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { PresentationModeProvider } from "@/contexts/PresentationModeContext";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+const bebasNeue = Bebas_Neue({
+  variable: "--font-bebas-neue",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
   title: "RR ALIADOS — Mega Dashboard",
-  description: "Centro de comando centralizado. Reportes de predicciones, optimización estratégica, 35+ skills de IA y aplicaciones corporativas.",
+  description:
+    "Centro de comando centralizado. Con las manos en el fuego. Reportes IA, skills y apps corporativas.",
+  icons: { icon: "/brand/favicon.svg" },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -25,11 +37,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="es"
+      className={`${inter.variable} ${ibmPlexMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <PresentationModeProvider>{children}</PresentationModeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

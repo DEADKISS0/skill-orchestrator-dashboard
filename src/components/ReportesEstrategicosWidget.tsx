@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import WidgetCard from "@/components/ui/WidgetCard";
 
 interface EstrategicoEntry {
   date: string;
@@ -56,25 +57,17 @@ export default function ReportesEstrategicosWidget() {
   }
 
   return (
-    <div className="card p-4 animate-in col-span-2">
-      {/* header */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">🎯</span>
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-          Reportes de Optimización Estratégica
-        </h3>
-        <span className="skill-badge active">{reports.length} reportes</span>
-        <button
-          onClick={() => setRefreshKey(k => k + 1)}
-          className="ml-auto text-xs px-2 py-1 rounded transition-colors hover:bg-white/10"
-          style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}
-          title="Actualizar"
-        >
+    <WidgetCard
+      title="Reportes de Optimización Estratégica"
+      icon="🎯"
+      badge={`${reports.length} reportes`}
+      badgeVariant="active"
+      action={
+        <button onClick={() => setRefreshKey((k) => k + 1)} className="btn-ghost !py-1 !px-2" title="Actualizar">
           ↻
         </button>
-      </div>
-
-      {/* navigation */}
+      }
+    >
       {reports.length > 0 && (
         <div className="flex gap-2 mb-3 flex-wrap">
           {reports.map((r, i) => (
@@ -83,7 +76,7 @@ export default function ReportesEstrategicosWidget() {
               onClick={() => setSelectedReport(r)}
               className="text-xs px-2 py-1 rounded transition-colors"
               style={{
-                background: selectedReport?.date === r.date ? "var(--accent)" : "var(--bg-secondary)",
+                background: selectedReport?.date === r.date ? "var(--ember)" : "var(--bg-secondary)",
                 color: selectedReport?.date === r.date ? "white" : "var(--text-secondary)",
               }}
             >
@@ -101,9 +94,8 @@ export default function ReportesEstrategicosWidget() {
               {selectedReport.pdf && (
                 <iframe
                   src={selectedReport.pdf}
-                  className="w-full rounded border"
+                  className="w-full rounded border report-iframe"
                   style={{
-                    height: "500px",
                     borderColor: "var(--border)",
                     background: "var(--bg-secondary)",
                   }}
@@ -133,7 +125,7 @@ export default function ReportesEstrategicosWidget() {
           {selectedReport.summary && (
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: "Progreso", value: selectedReport.summary.progreso, color: "var(--accent)" },
+                { label: "Progreso", value: selectedReport.summary.progreso, color: "var(--ember)" },
                 { label: "Acciones", value: selectedReport.summary.acciones, color: "var(--warning)" },
                 { label: "Urgentes", value: selectedReport.summary.urgentes, color: "var(--danger)" },
               ].map((m) => (
@@ -165,6 +157,6 @@ export default function ReportesEstrategicosWidget() {
           Última actualización: {lastUpdate}
         </div>
       )}
-    </div>
+    </WidgetCard>
   );
 }

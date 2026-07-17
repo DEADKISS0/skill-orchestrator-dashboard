@@ -1,11 +1,13 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import WidgetCard from "@/components/ui/WidgetCard";
 
 interface ReportEntry {
   date: string;
   label?: string;
   pdf: string;
   excel: string;
+  heuristic?: boolean;
   summary?: {
     total_changes?: number;
     trends?: number;
@@ -27,7 +29,10 @@ export default function MiroFishReportsWidget() {
     fetch("/reports/predicciones_index.json")
       .then((r) => r.json())
       .then((data) => {
-        const list: ReportEntry[] = data.reports || [];
+        const list: ReportEntry[] = (data.reports || []).map((r: ReportEntry) => ({
+          ...r,
+          heuristic: r.label?.toLowerCase().includes("heuríst") || false,
+        }));
         setReports(list);
         if (list.length > 0) setSelectedReport(list[0]);
         setLastUpdate(new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }));
@@ -54,31 +59,32 @@ export default function MiroFishReportsWidget() {
   if (loading && reports.length === 0) {
     return (
       <div className="card p-4 animate-in" id="mirofish-reports">
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Cargando reportes...</h3>
+        <div className="skeleton-shimmer h-8 w-48 rounded mb-2" />
+        <div className="skeleton-shimmer h-64 rounded" />
       </div>
     );
   }
 
   return (
-    <div className="card p-4 animate-in col-span-2">
-      {/* header */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">📊</span>
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-          Reportes de Predicciones — MiroFish-Lite
-        </h3>
-        <span className="skill-badge active">{reports.length} reportes</span>
-        <button
-          onClick={() => setRefreshKey(k => k + 1)}
-          className="ml-auto text-xs px-2 py-1 rounded transition-colors hover:bg-white/10"
-          style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}
-          title="Actualizar"
-        >
+    <WidgetCard
+      title="Reportes de Predicciones — MiroFish-Lite"
+      icon="📊"
+      badge={`${reports.length} reportes`}
+      badgeVariant="active"
+      action={
+        <button onClick={() => setRefreshKey((k) => k + 1)} className="btn-ghost !py-1 !px-2" title="Actualizar">
           ↻
         </button>
+      }
+    >
+      <div className="flex gap-2 mb-3 flex-wrap">
+        {selectedReport?.heuristic && (
+          <span className="skill-badge heuristic" title="Generado sin IA conectada">Modo heurístico</span>
+        )}
+        {!selectedReport?.heuristic && selectedReport && (
+          <span className="skill-badge active">Generado con IA</span>
+        )}
       </div>
-
-      {/* navigation */}
       {reports.length > 0 && (
         <div className="flex gap-2 mb-3 flex-wrap">
           {reports.map((r, i) => (
@@ -87,7 +93,7 @@ export default function MiroFishReportsWidget() {
               onClick={() => setSelectedReport(r)}
               className="text-xs px-2 py-1 rounded transition-colors"
               style={{
-                background: selectedReport?.date === r.date ? "var(--accent)" : "var(--bg-secondary)",
+                background: selectedReport?.date === r.date ? "var(--ember)" : "var(--bg-secondary)",
                 color: selectedReport?.date === r.date ? "white" : "var(--text-secondary)",
               }}
             >
@@ -105,9 +111,8 @@ export default function MiroFishReportsWidget() {
               {selectedReport.pdf && (
                 <iframe
                   src={selectedReport.pdf}
-                  className="w-full rounded border"
+                  className="w-full rounded border report-iframe"
                   style={{
-                    height: "500px",
                     borderColor: "var(--border)",
                     background: "var(--bg-secondary)",
                   }}
@@ -137,12 +142,12 @@ export default function MiroFishReportsWidget() {
           {selectedReport.summary && (
             <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
               {[
-                { label: "Cambios", value: selectedReport.summary.total_changes, color: "var(--accent)" },
+                { label: "Cambios", value: selectedReport.summary.total_changes, color: "var(--ember)" },
                 { label: "Tendencias", value: selectedReport.summary.trends, color: "var(--warning)" },
                 { label: "Anomalías", value: selectedReport.summary.anomalies, color: "var(--danger)" },
                 { label: "Riesgos", value: selectedReport.summary.risks, color: "var(--danger)" },
                 { label: "Oportunidades", value: selectedReport.summary.opportunities, color: "var(--success)" },
-                { label: "Acciones", value: selectedReport.summary.next_actions, color: "var(--accent)" },
+                { label: "Acciones", value: selectedReport.summary.next_actions, color: "var(--ember)" },
               ].map((m) => (
                 <div key={m.label} className="p-2 rounded text-center" style={{ background: "var(--bg-secondary)" }}>
                   <div className="text-lg font-bold" style={{ color: m.color }}>
@@ -172,6 +177,6 @@ export default function MiroFishReportsWidget() {
           Última actualización: {lastUpdate}
         </div>
       )}
-    </div>
+    </WidgetCard>
   );
 }

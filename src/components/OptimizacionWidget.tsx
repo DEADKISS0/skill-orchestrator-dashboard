@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import WidgetCard from "@/components/ui/WidgetCard";
 
 interface OptReport {
   name: string;
@@ -60,23 +61,16 @@ export default function OptimizacionWidget() {
   const total = Object.values(reports).reduce((a, b) => a + b.length, 0);
 
   return (
-    <div className="card p-4 animate-in col-span-2">
-      {/* header */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">📋</span>
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-          Reportes de Optimización
-        </h3>
-        <span className="skill-badge support">{total} reportes</span>
-        <button
-          onClick={() => setRefreshKey(k => k + 1)}
-          className="ml-auto text-xs px-2 py-1 rounded transition-colors hover:bg-white/10"
-          style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}
-          title="Actualizar"
-        >↻</button>
-      </div>
-
-      {/* tabs */}
+    <WidgetCard
+      title="Reportes de Optimización"
+      icon="📋"
+      badge={`${total} reportes`}
+      action={
+        <button onClick={() => setRefreshKey((k) => k + 1)} className="btn-ghost !py-1 !px-2" title="Actualizar">
+          ↻
+        </button>
+      }
+    >
       <div className="flex gap-2 mb-3">
         {tabs.map((tab) => {
           const count = (reports[tab.key] || []).length;
@@ -84,7 +78,7 @@ export default function OptimizacionWidget() {
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className="flex items-center gap-1 px-3 py-1.5 rounded text-xs transition-colors"
               style={{
-                background: activeTab === tab.key ? "var(--accent)" : "var(--bg-secondary)",
+                background: activeTab === tab.key ? "var(--ember)" : "var(--bg-secondary)",
                 color: activeTab === tab.key ? "white" : "var(--text-secondary)",
               }}>
               <span>{tab.icon}</span>
@@ -107,7 +101,7 @@ export default function OptimizacionWidget() {
             <button key={i} onClick={() => setSelected(r)}
               className="text-xs px-2 py-1 rounded transition-colors"
               style={{
-                background: selected?.path === r.path ? "var(--accent)" : "var(--bg-secondary)",
+                background: selected?.path === r.path ? "var(--ember)" : "var(--bg-secondary)",
                 color: selected?.path === r.path ? "white" : "var(--text-secondary)",
               }}>
               {r.name}
@@ -120,8 +114,8 @@ export default function OptimizacionWidget() {
       {selected ? (
         <div className="space-y-3">
           <iframe src={selected.path}
-            className="w-full rounded border"
-            style={{ height: "500px", borderColor: "var(--border)", background: "var(--bg-secondary)" }}
+            className="w-full rounded border report-iframe"
+            style={{ borderColor: "var(--border)", background: "var(--bg-secondary)" }}
             title={selected.name} />
           <div className="flex gap-2">
             <a href={selected.path} download className="btn-primary text-xs flex items-center gap-1">
@@ -147,6 +141,6 @@ export default function OptimizacionWidget() {
           Última actualización: {lastUpdate}
         </div>
       )}
-    </div>
+    </WidgetCard>
   );
 }

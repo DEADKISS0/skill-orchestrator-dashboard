@@ -10,13 +10,18 @@ export default function BusinessMetricsWidget() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [predRes, stratRes] = await Promise.all([
+      const [predRes, stratRes, optRes] = await Promise.all([
         fetch("/reports/predicciones_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
         fetch("/reports/estrategicos_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
+        fetch("/optimizacion/reports_index.json").then(r => r.json()).catch(() => ({ reports: {} })),
       ]);
       const predCount = predRes.reports?.length || 0;
       const stratCount = stratRes.reports?.length || 0;
-      setMetrics(getMetrics(predCount, stratCount, STATS.installed, STATS.total));
+      const optReports = optRes.reports || {};
+      const optCount = Object.values(optReports as Record<string, unknown[]>).reduce(
+        (a, b) => a + (Array.isArray(b) ? b.length : 0), 0
+      );
+      setMetrics(getMetrics(predCount, stratCount, STATS.installed, STATS.total, optCount));
       setLastUpdate(new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }));
     } catch (e) {
       setMetrics(getMetrics(0, 0, STATS.installed, STATS.total));
@@ -30,7 +35,7 @@ export default function BusinessMetricsWidget() {
   }, [refreshKey]);
 
   return (
-    <div className="card p-4 animate-in col-span-full">
+    <div className="card p-4 animate-in h-full">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">📈</span>
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>

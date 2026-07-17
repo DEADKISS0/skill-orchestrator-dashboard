@@ -1,6 +1,61 @@
 {
   "reports": [
     {
+      "date": "2026-07-17_0246",
+      "label": "Estrategico - 2026-07-17 02:46",
+      "pdf": "/reports/Reporte_Estrategico_2026-07-17_0246.pdf",
+      "excel": "/reports/Reporte_Estrategico_2026-07-17_0246.xlsx",
+      "summary": {
+        "progreso": "30%",
+        "acciones": 2,
+        "urgentes": 2
+      }
+    },
+    {
+      "date": "2026-07-17_0226",
+      "label": "Estrategico - 2026-07-17 02:26",
+      "pdf": "/reports/Reporte_Estrategico_2026-07-17_0226.pdf",
+      "excel": "/reports/Reporte_Estrategico_2026-07-17_0226.xlsx",
+      "summary": {
+        "progreso": "N/A",
+        "acciones": 1,
+        "urgentes": 0
+      }
+    },
+    {
+      "date": "2026-07-17_0214",
+      "label": "Estrategico - 2026-07-17 02:14",
+      "pdf": "/reports/Reporte_Estrategico_2026-07-17_0214.pdf",
+      "excel": "/reports/Reporte_Estrategico_2026-07-17_0214.xlsx",
+      "summary": {
+        "progreso": "N/A",
+        "acciones": 1,
+        "urgentes": 0
+      }
+    },
+    {
+      "date": "2026-07-16_1703",
+      "label": "Estrategico - 2026-07-16 17:03",
+      "pdf": "/reports/Reporte_Estrategico_2026-07-16_1703.pdf",
+      "excel": "/reports/Reporte_Estrategico_2026-07-16_1703.xlsx",
+      "summary": {
+        "progreso": "N/A",
+        "acciones": 1,
+        "urgentes": 0
+      }
+    },
+    {
+      "date": "2026-07-16_1621",
+      "label": "Estrategico - 2026-07-16 16:21",
+      "pdf": "/reports/Reporte_Estrategico_2026-07-16_1621.pdf",
+      "excel": "/reports/Reporte_Estrategico_2026-07-16_1621.xlsx",
+      "summary": {
+        "progreso": "12%",
+        "acciones": 14,
+        "urgentes": 8
+      }
+    },
+    {
       "date": "2026-07-16_1100",
       "label": "Estrategico - 2026-07-16 11:00",
       "pdf": "/reports/Reporte_Estrategico_2026-07-16_1100.pdf",
@@ -53,50 +108,6 @@
         "progreso": "",
         "acciones": 13,
         "urgentes": 8
-      }
-    },
-    {
-      "date": "2026-07-14_0433",
-      "label": "Estrategico - 2026-07-14 04:33",
-      "pdf": "/reports/Reporte_Optimizacion_2026-07-14_0433.pdf",
-      "excel": "",
-      "summary": {
-        "progreso": "18%",
-        "acciones": 13,
-        "urgentes": 8
-      }
-    },
-    {
-      "date": "2026-07-14_0333",
-      "label": "Estrategico - 2026-07-14 03:33",
-      "pdf": "/reports/Reporte_Optimizacion_2026-07-14_0333.pdf",
-      "excel": "",
-      "summary": {
-        "progreso": "18%",
-        "acciones": 0,
-        "urgentes": 0
-      }
-    },
-    {
-      "date": "2026-07-14_0201",
-      "label": "Estrategico - 2026-07-14 02:01",
-      "pdf": "/reports/Reporte_Optimizacion_2026-07-14_0201.pdf",
-      "excel": "",
-      "summary": {
-        "progreso": "",
-        "acciones": 0,
-        "urgentes": 0
-      }
-    },
-    {
-      "date": "2026-07-14_0124",
-      "label": "Estrategico - 2026-07-14 01:24",
-      "pdf": "/reports/Reporte_Optimizacion_2026-07-14_0124.pdf",
-      "excel": "",
-      "summary": {
-        "progreso": "",
-        "acciones": 0,
-        "urgentes": 0
       }
     }
   ]

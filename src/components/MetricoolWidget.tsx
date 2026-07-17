@@ -13,8 +13,9 @@ export default function MetricoolWidget() {
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">📱</span>
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Metricool Analytics</h3>
-        <span className="skill-badge active">metricool-browser-operator</span>
+        <span className="skill-badge demo">Demo</span>
       </div>
+      <div className="banner-mock mb-3">Datos de ejemplo. Conecta Metricool vía API cuando haya credenciales.</div>
       <div className="grid grid-cols-2 gap-2">
         {metrics.map((m,i) => (
           <div key={i} className="p-3 rounded-lg" style={{ background: "var(--bg-secondary)" }}>

@@ -8,8 +8,9 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       className="text-sm px-2 py-1 rounded transition-colors hover:bg-white/10"
-      style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}
+      style={{ color: "var(--ash)", background: "var(--void-30)", border: "1px solid var(--border)" }}
       title={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+      aria-label="Alternar tema claro/oscuro"
     >
       {theme === "dark" ? "☀️" : "🌙"}
     </button>

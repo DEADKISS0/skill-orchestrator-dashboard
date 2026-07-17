@@ -15,12 +15,12 @@ export interface CostItem {
 }
 
 export const financialMetrics: FinancialMetric[] = [
-  { label: "Capital Disponible", value: "$10M COP", icon: "💰", color: "var(--success)", subtitle: "Inversión de capitalista" },
+  { label: "Capital Disponible", value: "$5M COP", icon: "💰", color: "var(--warning)", subtitle: "Post-auditoría Jul 2026" },
   { label: "Costo Mensual (mín)", value: "$450K COP", icon: "📉", color: "var(--warning)", subtitle: "Suscripciones + honorarios" },
   { label: "Costo Mensual (equipo)", value: "$800K-$1.2M", icon: "👥", color: "var(--danger)", subtitle: "Con equipo activo, sin proyectos" },
-  { label: "Runway Estimado", value: "18-20 meses", icon: "⏰", color: "var(--accent)", subtitle: "Sin nuevos ingresos" },
-  { label: "Ingresos Activos", value: "$0", icon: "⚠️", color: "var(--danger)", subtitle: "Situación crítica" },
-  { label: "Objetivo 12 meses", value: "5 clientes", icon: "🎯", color: "var(--success)", subtitle: "Activos simultáneos" },
+  { label: "Runway Estimado", value: "~11 meses", icon: "⏰", color: "var(--ember)", subtitle: "Sin nuevos ingresos" },
+  { label: "Ingresos Activos", value: "$0", icon: "⚠️", color: "var(--danger)", subtitle: "Situación crítica — cerrar Wuunder" },
+  { label: "Meta Q3 2026", value: "3 clientes", icon: "🎯", color: "var(--success)", subtitle: "Objetivo supervivencia" },
 ];
 
 export const teamCosts: CostItem[] = [

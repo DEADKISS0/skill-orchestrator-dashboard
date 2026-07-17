@@ -106,10 +106,10 @@ export default function ChatbotWidget() {
   };
 
   const quickCommands = [
-    { label: "📊 Resumen", cmd: "generar reporte Resumen del Dashboard" },
-    { label: "📈 Métricas", cmd: "generar reporte Métricas del Negocio" },
-    { label: "🎯 Estrategia", cmd: "generar reporte Análisis Estratégico" },
-    { label: "🔧 Skills", cmd: "generar reporte Catálogo de Skills" },
+    { label: "🔥 Wuunder", cmd: "¿Cuál es el estado actual de Wuunder y próximos pasos?" },
+    { label: "📊 Predicción", cmd: "Resume el último reporte de predicciones del dashboard" },
+    { label: "💰 Runway", cmd: "¿Cuántos días de runway tenemos con $5M de capital?" },
+    { label: "🎯 Meta Q3", cmd: "¿Qué falta para cerrar 3 clientes en Q3 2026?" },
   ];
 
   if (!isOpen) {
@@ -117,7 +117,7 @@ export default function ChatbotWidget() {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-lg transition-transform hover:scale-110 z-40"
-        style={{ background: "var(--accent)", color: "white" }}
+        style={{ background: "var(--ember)", color: "var(--parchment)", boxShadow: "var(--shadow-ember-sm)" }}
         title="Chat con IA"
       >
         🤖
@@ -127,14 +127,14 @@ export default function ChatbotWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 w-96 h-[500px] rounded-xl shadow-2xl flex flex-col z-40 overflow-hidden"
-      style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+      style={{ background: "var(--pitch-95)", border: "1px solid var(--ember-30)" }}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "var(--border)" }}>
+      <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "var(--ember-20)" }}>
         <div className="flex items-center gap-2">
-          <span className="text-lg">🤖</span>
+          <span className="text-lg">🔥</span>
           <div>
-            <div className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>RR ALIADOS Assistant</div>
-            <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>Asistente de IA + Generador de PDFs</div>
+            <div className="font-display text-sm tracking-wide" style={{ color: "var(--parchment)" }}>RR ALIADOS Assistant</div>
+            <div className="font-mono-label" style={{ color: "var(--ash)" }}>Con las manos en el fuego</div>
           </div>
         </div>
         <button onClick={() => setIsOpen(false)} className="text-sm" style={{ color: "var(--text-muted)" }}>✕</button>
@@ -181,7 +181,7 @@ export default function ChatbotWidget() {
                     href={msg.pdfUrl}
                     download={`Reporte_RR_ALIADOS_${Date.now()}.html`}
                     className="inline-block px-3 py-1 rounded text-xs font-medium"
-                    style={{ background: "var(--accent)", color: "white" }}
+                    style={{ background: "var(--ember)", color: "var(--parchment)", boxShadow: "var(--shadow-ember-sm)" }}
                   >
                     📥 Descargar Reporte
                   </a>

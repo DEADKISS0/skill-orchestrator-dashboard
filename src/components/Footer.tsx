@@ -3,15 +3,31 @@ import { STATS } from "@/data/skillsCatalog";
 
 export default function Footer() {
   return (
-    <footer className="flex items-center justify-between px-6 py-2 border-t text-xs"
-      style={{ borderColor: "var(--border)", color: "var(--text-muted)", background: "var(--bg-secondary)" }}>
-      <span>RR ALIADOS S.A.S. — NIT 902.036.366 — Medellín, Colombia</span>
-      <div className="flex items-center gap-3">
-        <span style={{color:"var(--success)"}}>{STATS.installed} instaladas</span>
-        <span>·</span>
-        <span style={{color:"var(--accent)"}}>{STATS.available} disponibles</span>
-        <span>·</span>
-        <span>{STATS.total} total</span>
+    <footer
+      className="relative z-10 flex flex-col gap-3"
+      style={{
+        padding: "0.875rem var(--page-x) 1rem",
+        borderTop: "1px solid var(--border)",
+        color: "var(--text-muted)",
+        background: "var(--bg-glass)",
+        backdropFilter: "blur(16px)",
+      }}
+    >
+      <div className="glow-line w-full max-w-md mx-auto opacity-40" />
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <span className="font-mono-label text-[10px] text-center sm:text-left">
+          RR ALIADOS S.A.S. · NIT 902.036.366 · Medellín, Colombia
+        </span>
+        <span className="font-display text-sm tracking-widest" style={{ color: "var(--ember-light)" }}>
+          Con las manos en el fuego.
+        </span>
+        <div className="flex items-center gap-3 font-mono-label text-[10px]">
+          <span style={{ color: "var(--success)" }}>{STATS.installed} activas</span>
+          <span style={{ opacity: 0.3 }}>·</span>
+          <span style={{ color: "var(--ember)" }}>{STATS.available} disp.</span>
+          <span style={{ opacity: 0.3 }}>·</span>
+          <span>{STATS.total} total</span>
+        </div>
       </div>
     </footer>
   );

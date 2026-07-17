@@ -1,45 +1,92 @@
-# RR ALIADOS — MiroFish Dashboard
+# RR ALIADOS — Mega Dashboard
 
-Dashboard de skills y reportes MiroFish-Lite para RR ALIADOS S.A.S.
+Centro de comando interno de RR ALIADOS S.A.S. — Brutalismo Estratégico Colombiano.
 
-## Widgets de reportes
+**Producción:** https://rr-aliados-mega-dashboard.vercel.app/
 
-### MiroFish Reports
-- Visor PDF con KPIs (cambios, tendencias, anomalías, riesgos, oportunidades, acciones)
-- Auto-refresh cada 5 minutos
-- Fuente: `public/reports/reports_index.json` (generado por `enhanced_report.py`)
+## Stack
 
-### Optimización
-- Tabs: Diarios / Semanales / Mensuales / Dashboards
-- Visor PDF con descarga y enlace a nueva pestaña
-- Auto-refresh cada 5 minutos
-- Fuente: `public/optimizacion/reports_index.json` (generado por `optimization_report.py`)
+- Next.js 16 + React 19 + Tailwind 4 + TypeScript
+- Design system: Pitch / Void / Ember / Parchment / Ash (brandkit RR)
+- Fuentes: Bebas Neue, Inter, IBM Plex Mono
+
+## Features
+
+| Feature | Descripción |
+|---------|-------------|
+| **Modo presentación** | Oculta widgets internos para pitches (botón en header) |
+| **Command palette** | `Ctrl+K` — búsqueda + acciones rápidas (Wuunder, deploy, reportes) |
+| **Pipeline API** | `/api/pipeline` — deals Wuunder/Real Seguros en vivo |
+| **Automation health** | `/api/automation` — estado de scripts MiroFish, sync, deploy |
+| **Meta 5 años** | Progreso hacia visión 2026→2031 desde `_HOJA_DE_RUTA.md` |
+| **PWA** | `manifest.json` con colores pitch/ember |
+
+## Widgets de reportes IA
+
+| Widget | Índice JSON | Carpeta PDFs |
+|--------|-------------|--------------|
+| Predicciones | `/reports/predicciones_index.json` | `public/reports/` |
+| Estrategia | `/reports/estrategicos_index.json` | `public/reports/` |
+| Optimización | `/optimizacion/reports_index.json` | `public/optimizacion/` |
 
 ## Pipeline
 
 ```
-enhanced_report.py → _sync_to_dashboard() → /public/reports/
-optimization_report.py → generate_all() → /public/optimizacion/
-                                     ↓
-                        run_daily.bat → vercel deploy --prod --yes
-                                     ↓
-                        https://skill-orchestrator-dashboard.vercel.app
+enhanced_report.py → public/reports/ (+ predicciones_index.json, estrategicos_index.json)
+optimization_report.py → public/optimizacion/ (+ reports_index.json)
+         ↓
+scripts/sync_reports.ps1  (copia PDFs desde MiroFish-Lite)
+         ↓
+vercel deploy --prod --yes
+         ↓
+https://rr-aliados-mega-dashboard.vercel.app/
 ```
 
-## Deploy manual
+## Desarrollo local
 
 ```bash
 cd skill-orchestrator-dashboard
-vercel deploy --prod --yes
+npm install
+npm run dev
 ```
 
-## Estructura
+> **Nota:** `node_modules` en Google Drive puede corromperse. Preferir build en Vercel o instalar fuera de Drive.
+
+### Variables de entorno (`.env.local`)
+
+| Variable | Uso |
+|----------|-----|
+| `OPENROUTER_API_KEY` / `GROQ_API_KEY` | Chatbot IA (failover automático) |
+| `GOOGLE_ANALYTICS_PROPERTY_ID` | GA4 real |
+| `GOOGLE_SERVICE_ACCOUNT_KEY` | GA4 real |
+| `GOOGLE_CALENDAR_*` | Calendar real |
+
+Sin credenciales, GA/Calendar/Metricool muestran badge **DEMO/Mock**.
+
+## Sync de reportes
+
+```powershell
+.\scripts\sync_reports.ps1
+```
+
+## Estructura clave
 
 | Ruta | Contenido |
 |------|-----------|
-| `src/components/MiroFishReportsWidget.tsx` | Widget de reportes de predicciones |
-| `src/components/OptimizacionWidget.tsx` | Widget de reportes de optimización |
-| `public/reports/` | PDFs y JSON de predicciones (generados por bot) |
-| `public/optimizacion/` | PDFs y JSON de optimización (generados por bot) |
+| `src/styles/brand-tokens.css` | Tokens de marca RR |
+| `src/components/ui/WidgetCard.tsx` | Primitive de card unificada |
+| `src/app/page.tsx` | Layout grid 12 columnas simétrico |
+| `src/app/api/pipeline/route.ts` | API pipeline comercial |
+| `src/app/api/automation/route.ts` | API salud automatizaciones |
+| `src/data/businessContext.ts` | KPIs vivos (runway, Wuunder, meta 5 años) |
+| `src/data/skillsCatalog.ts` | Catálogo de skills (fuente de verdad) |
+| `src/contexts/PresentationModeContext.tsx` | Modo pitch |
+| `public/brand/` | Logo y favicon |
 
-https://rr-aliados-mega-dashboard.vercel.app/
+## Deploy
+
+```bash
+vercel deploy --prod --yes
+```
+
+Verificar skills: `python RR_Aliados\05_IA_Herramientas\Skills\sync_skills.py` → 36=36

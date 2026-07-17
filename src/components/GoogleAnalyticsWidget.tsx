@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import WidgetCard from "@/components/ui/WidgetCard";
 
 interface GAData {
   configured?: boolean;
@@ -37,41 +38,43 @@ export default function GoogleAnalyticsWidget() {
 
   if (loading) {
     return (
-      <div className="card p-4 animate-in">
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Cargando analytics...</h3>
-      </div>
+      <WidgetCard title="Google Analytics" icon="📊">
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>Cargando analytics...</p>
+      </WidgetCard>
     );
   }
 
   if (!data) return null;
 
   return (
-    <div className="card p-4 animate-in col-span-2">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">📊</span>
-        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Google Analytics</h3>
-        <span className="skill-badge support">Tiempo Real</span>
+    <WidgetCard
+      title="Google Analytics"
+      icon="📊"
+      badge="Tiempo Real"
+      badgeVariant="support"
+      action={
         <button
-          onClick={() => setRefreshKey(k => k + 1)}
-          className="ml-auto text-xs px-2 py-1 rounded transition-colors hover:bg-white/10"
-          style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}
+          onClick={() => setRefreshKey((k) => k + 1)}
+          className="btn-ghost !py-1 !px-2"
           title="Actualizar"
         >
           ↻
         </button>
-      </div>
+      }
+    >
 
       {/* Warning if simulated */}
       {!data.configured && (
-        <div className="mb-3 p-2 rounded text-[11px]" style={{ background: "rgba(245,158,11,0.1)", color: "var(--warning)", border: "1px solid rgba(245,158,11,0.3)" }}>
-          ⚠️ Datos simulados. Configura GOOGLE_ANALYTICS_PROPERTY_ID y GOOGLE_SERVICE_ACCOUNT_KEY en .env.local para datos reales.
+        <div className="banner-mock mb-3 flex items-center justify-between gap-2">
+          <span>⚠️ DEMO — Datos simulados. Conecta GA4 en .env.local</span>
+          <span className="skill-badge demo">Mock</span>
         </div>
       )}
 
       {/* Real-time KPIs */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="p-2 rounded-lg text-center" style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
-          <div className="text-lg font-bold" style={{ color: "var(--accent)" }}>{data.realTime.activeUsers}</div>
+          <div className="text-lg font-bold" style={{ color: "var(--ember)" }}>{data.realTime.activeUsers}</div>
           <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>Activos ahora</div>
         </div>
         <div className="p-2 rounded-lg text-center" style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
@@ -129,6 +132,6 @@ export default function GoogleAnalyticsWidget() {
           Última actualización: {lastUpdate}
         </div>
       )}
-    </div>
+    </WidgetCard>
   );
 }
