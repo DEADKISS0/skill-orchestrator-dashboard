@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import WidgetCard from "@/components/ui/WidgetCard";
 import ReportSelector from "@/components/ui/ReportSelector";
 import RegenerarReportButton from "@/components/ui/RegenerarReportButton";
+import ReportViewer from "@/components/ui/ReportViewer";
 
 interface ReportEntry {
   date: string;
@@ -17,17 +18,16 @@ interface ReportEntry {
     risks?: number;
     opportunities?: number;
     next_actions?: number;
+    quality?: "verified" | "rejected";
   };
 }
 
-/** Cotizador / panel denso de predicciones — KPIs primero, preview compacto. */
 export default function MiroFishReportsWidget() {
   const [reports, setReports] = useState<ReportEntry[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState(0);
-  const [showPreview, setShowPreview] = useState(false);
 
   const selectedReport = reports[selectedIndex] ?? null;
 
@@ -37,7 +37,7 @@ export default function MiroFishReportsWidget() {
       .then((data) => {
         const list: ReportEntry[] = (data.reports || []).map((r: ReportEntry) => ({
           ...r,
-          heuristic: r.label?.toLowerCase().includes("heuríst") || false,
+          heuristic: r.summary?.quality === "rejected" || r.label?.toLowerCase().includes("heuríst") || false,
         }));
         setReports(list);
         setSelectedIndex(0);
@@ -55,13 +55,9 @@ export default function MiroFishReportsWidget() {
 
   if (loading && reports.length === 0) {
     return (
-      <WidgetCard title="Cotizador Predicciones" icon="📊">
+      <WidgetCard title="Predicciones MiroFish" icon="📊">
         <div className="skeleton-ember h-8 w-40 mb-2" />
-        <div className="grid grid-cols-3 gap-2 mb-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="skeleton-ember h-14 rounded" />
-          ))}
-        </div>
+        <div className="skeleton-ember rounded-lg" style={{ height: 480 }} />
       </WidgetCard>
     );
   }
@@ -71,7 +67,7 @@ export default function MiroFishReportsWidget() {
 
   return (
     <WidgetCard
-      title="Cotizador Predicciones"
+      title="Predicciones MiroFish"
       icon="📊"
       badge={archivedCount > 0 ? `${reports.length} rpt` : `${reports.length}`}
       badgeVariant="active"
@@ -104,15 +100,12 @@ export default function MiroFishReportsWidget() {
       <ReportSelector
         reports={reports}
         selectedDate={selectedReport?.date ?? null}
-        onSelect={(i) => {
-          setSelectedIndex(i);
-          setShowPreview(false);
-        }}
+        onSelect={setSelectedIndex}
         maxRecent={3}
       />
 
       {selectedReport && s && (
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 mb-2">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 mb-3">
           {[
             { label: "Cambios", value: s.total_changes, color: "var(--ember)" },
             { label: "Tend.", value: s.trends, color: "var(--warning)" },
@@ -138,45 +131,12 @@ export default function MiroFishReportsWidget() {
       )}
 
       {selectedReport && (
-        <div className="flex gap-2 flex-wrap items-center mb-2">
-          {selectedReport.pdf && (
-            <a href={selectedReport.pdf} download className="btn-primary !py-1 !px-2.5 text-[11px]">
-              📄 PDF
-            </a>
-          )}
-          {selectedReport.excel && (
-            <a
-              href={selectedReport.excel}
-              download
-              className="btn-primary !py-1 !px-2.5 text-[11px]"
-              style={{ background: "var(--success)" }}
-            >
-              📊 Excel
-            </a>
-          )}
-          {selectedReport.pdf && (
-            <button
-              type="button"
-              className="btn-ghost !py-1 !px-2.5 text-[11px]"
-              onClick={() => setShowPreview((v) => !v)}
-            >
-              {showPreview ? "Ocultar preview" : "Preview PDF"}
-            </button>
-          )}
-        </div>
-      )}
-
-      {showPreview && selectedReport?.pdf && (
-        <iframe
-          src={selectedReport.pdf}
-          className="w-full rounded-lg border"
-          style={{
-            borderColor: "var(--border)",
-            background: "var(--bg-secondary)",
-            height: 280,
-            minHeight: 280,
-          }}
-          title="Preview predicciones"
+        <ReportViewer
+          key={selectedReport.date}
+          pdf={selectedReport.pdf}
+          excel={selectedReport.excel}
+          title={`Predicciones ${selectedReport.label || selectedReport.date}`}
+          defaultOpen
         />
       )}
 

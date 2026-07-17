@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import WidgetCard from "@/components/ui/WidgetCard";
 import ReportSelector from "@/components/ui/ReportSelector";
 import RegenerarReportButton from "@/components/ui/RegenerarReportButton";
+import ReportViewer from "@/components/ui/ReportViewer";
 
 interface EstrategicoEntry {
   date: string;
@@ -14,6 +15,7 @@ interface EstrategicoEntry {
     progreso?: string;
     acciones?: number;
     urgentes?: number;
+    quality?: "verified" | "rejected";
   };
 }
 
@@ -32,7 +34,7 @@ export default function ReportesEstrategicosWidget() {
       .then((data) => {
         const list: EstrategicoEntry[] = (data.reports || []).map((r: EstrategicoEntry) => ({
           ...r,
-          heuristic: r.label?.toLowerCase().includes("heuríst") || false,
+          heuristic: r.summary?.quality === "rejected" || r.label?.toLowerCase().includes("heuríst") || false,
         }));
         setReports(list);
         setSelectedIndex(0);
@@ -52,12 +54,7 @@ export default function ReportesEstrategicosWidget() {
     return (
       <WidgetCard title="Optimización Estratégica" icon="🎯">
         <div className="skeleton-ember h-8 w-48 mb-3" />
-        <div className="skeleton-ember h-9 w-full mb-3" />
-        <div className="skeleton-ember report-iframe rounded-lg" />
-        <div className="flex gap-2 mt-3">
-          <div className="skeleton-ember h-8 w-20" />
-          <div className="skeleton-ember h-8 w-20" />
-        </div>
+        <div className="skeleton-ember rounded-lg" style={{ height: 480 }} />
       </WidgetCard>
     );
   }
@@ -84,14 +81,17 @@ export default function ReportesEstrategicosWidget() {
         </div>
       }
     >
-      {selectedReport?.heuristic && (
-        <span className="skill-badge heuristic mb-2 inline-flex" title="Generado sin IA conectada">
-          Modo heurístico
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        {selectedReport?.heuristic ? (
+          <span className="skill-badge heuristic">Heurístico</span>
+        ) : selectedReport ? (
+          <span className="skill-badge active">IA</span>
+        ) : null}
+        <span className="font-mono-label text-[10px]" style={{ color: "var(--text-muted)" }}>
+          {selectedReport?.label || "Sin reporte"}
+          {lastUpdate ? ` · ${lastUpdate}` : ""}
         </span>
-      )}
-      {!selectedReport?.heuristic && selectedReport && (
-        <span className="skill-badge active mb-2 inline-flex">Generado con IA</span>
-      )}
+      </div>
 
       <ReportSelector
         reports={reports}
@@ -100,55 +100,43 @@ export default function ReportesEstrategicosWidget() {
         maxRecent={3}
       />
 
-      {selectedReport && (
-        <div className="space-y-3">
-          {selectedReport.pdf && (
-            <iframe
-              src={selectedReport.pdf}
-              className="w-full rounded-lg border report-iframe"
-              style={{ borderColor: "var(--border)", background: "var(--bg-secondary)" }}
-              title="Reporte Estratégico PDF"
-            />
-          )}
-
-          <div className="flex gap-2 flex-wrap">
-            {selectedReport.pdf && (
-              <a href={selectedReport.pdf} download className="btn-primary text-xs">📄 PDF</a>
-            )}
-            {selectedReport.excel && (
-              <a href={selectedReport.excel} download className="btn-primary text-xs" style={{ background: "var(--success)" }}>
-                📊 Excel
-              </a>
-            )}
-          </div>
-
-          {selectedReport.summary && (
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: "Progreso", value: selectedReport.summary.progreso, color: "var(--ember)" },
-                { label: "Acciones", value: selectedReport.summary.acciones, color: "var(--warning)" },
-                { label: "Urgentes", value: selectedReport.summary.urgentes, color: "var(--danger)" },
-              ].map((m) => (
-                <div key={m.label} className="p-2 rounded text-center" style={{ background: "var(--bg-secondary)" }}>
-                  <div className="text-lg font-bold" style={{ color: m.color }}>{m.value ?? "—"}</div>
-                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>{m.label}</div>
-                </div>
-              ))}
+      {selectedReport?.summary && (
+        <div className="grid grid-cols-3 gap-1.5 mb-3">
+          {[
+            { label: "Progreso", value: selectedReport.summary.progreso, color: "var(--ember)" },
+            { label: "Acciones", value: selectedReport.summary.acciones, color: "var(--warning)" },
+            { label: "Urgentes", value: selectedReport.summary.urgentes, color: "var(--danger)" },
+          ].map((m) => (
+            <div
+              key={m.label}
+              className="py-1.5 px-1 rounded text-center"
+              style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)" }}
+            >
+              <div className="font-display text-base leading-none" style={{ color: m.color }}>
+                {m.value ?? "—"}
+              </div>
+              <div className="text-[9px] mt-0.5 font-mono-label" style={{ color: "var(--text-muted)" }}>
+                {m.label}
+              </div>
             </div>
-          )}
+          ))}
         </div>
+      )}
+
+      {selectedReport && (
+        <ReportViewer
+          key={selectedReport.date}
+          pdf={selectedReport.pdf}
+          excel={selectedReport.excel}
+          title={`Estratégico ${selectedReport.label || selectedReport.date}`}
+          defaultOpen
+        />
       )}
 
       {!selectedReport && (
-        <div className="p-8 text-center" style={{ color: "var(--text-muted)" }}>
-          <p className="text-sm mb-3">No hay reportes estratégicos generados aún.</p>
+        <div className="py-4 text-center" style={{ color: "var(--text-muted)" }}>
+          <p className="text-xs mb-2">No hay reportes estratégicos aún.</p>
           <RegenerarReportButton variant="estrategicos" />
-        </div>
-      )}
-
-      {lastUpdate && (
-        <div className="mt-2 text-[10px] text-right font-mono-label" style={{ color: "var(--text-muted)" }}>
-          Actualizado: {lastUpdate}
         </div>
       )}
     </WidgetCard>
