@@ -1,7 +1,6 @@
-# Pre-deploy gate: verifica que apps con embed iframe/auto no tengan hard-block de framing.
-# Uso: .\scripts\check_ecosystem_embeds.ps1
-# Preferible contra prod: .\scripts\check_ecosystem_embeds.ps1 -BaseUrl https://rr-aliados-mega-dashboard.vercel.app
-# O local: npm run dev + .\scripts\check_ecosystem_embeds.ps1 -BaseUrl http://localhost:3000
+# Pre-deploy gate: apps with embed iframe/auto must not have hard-block framing headers.
+# Usage: .\scripts\check_ecosystem_embeds.ps1
+# Against prod: .\scripts\check_ecosystem_embeds.ps1 -BaseUrl https://rr-aliados-mega-dashboard.vercel.app
 
 param(
     [string]$BaseUrl = "https://rr-aliados-mega-dashboard.vercel.app"
@@ -16,7 +15,7 @@ Write-Host "GET $endpoint"
 try {
     $resp = Invoke-RestMethod -Uri $endpoint -Method Get -TimeoutSec 120
 } catch {
-    Write-Host "FAIL: no se pudo llamar embed-check: $_" -ForegroundColor Red
+    Write-Host "FAIL: embed-check unreachable: $_" -ForegroundColor Red
     exit 2
 }
 
@@ -32,16 +31,16 @@ foreach ($r in $resp.results) {
         "unreachable" { "Red" }
         default { "Gray" }
     }
-    Write-Host ("[{0}] {1} embed={2} — {3}" -f $r.verdict, $r.id, $r.configuredEmbed, $r.detail) -ForegroundColor $color
+    $line = "[{0}] {1} embed={2} - {3}" -f $r.verdict, $r.id, $r.configuredEmbed, $r.detail
+    Write-Host $line -ForegroundColor $color
 }
 
 if (-not $resp.ok) {
     Write-Host ""
-    Write-Host "GATE FAIL — hardFails: $($resp.hardFails -join ', ')" -ForegroundColor Red
-    Write-Host "Corrige headers del sitio destino o marca embed:card solo si es imposible embeber." -ForegroundColor Red
+    Write-Host ("GATE FAIL - hardFails: {0}" -f ($resp.hardFails -join ", ")) -ForegroundColor Red
     exit 1
 }
 
 Write-Host ""
-Write-Host "GATE OK — ninguna app iframe/auto con hard-block." -ForegroundColor Green
+Write-Host "GATE OK - no iframe/auto app with hard-block." -ForegroundColor Green
 exit 0
