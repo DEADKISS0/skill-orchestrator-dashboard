@@ -17,6 +17,7 @@ export const searchIndex: SearchItem[] = [
 
   // Widgets de Reportes
   { id: "mirofish-reports", title: "Predicciones MiroFish", description: "Reportes de predicciones con IA para los próximos 7 días", type: "widget", section: "REPORTES", targetId: "mirofish-reports", icon: "📊" },
+  { id: "optimizacion", title: "Optimización Temporal", description: "Reportes diarios, semanales y mensuales de optimización", type: "widget", section: "REPORTES", targetId: "optimizacion", icon: "📋" },
   { id: "estrategia", title: "Optimización Estratégica", description: "Reporte estratégico contra la meta 5-year de RR ALIADOS", type: "widget", section: "REPORTES", targetId: "estrategia", icon: "🎯" },
 
   // Aplicaciones
@@ -25,6 +26,7 @@ export const searchIndex: SearchItem[] = [
   { id: "altruismo", title: "Altruismo", description: "Herramientas web sin anuncios", type: "app", section: "APLICACIONES", targetId: "altruismo", icon: "🤝" },
   { id: "skills-hub-app", title: "RR Skills Hub", description: "Catálogo de skills de RR ALIADOS", type: "app", section: "APLICACIONES", targetId: "skills-hub-app", icon: "📚" },
   { id: "adquisicion", title: "Dashboard de Adquisición", description: "Panel de adquisición de clientes", type: "app", section: "APLICACIONES", targetId: "adquisicion", icon: "📈" },
+  { id: "adq-talentos", title: "Adq. Talentos", description: "Entrevistas y adquisición de freelancers", type: "app", section: "APLICACIONES", targetId: "adq-talentos", icon: "👥" },
   { id: "dashweb", title: "DashWeb Core", description: "Plataforma ERP/CRM interna", type: "app", section: "APLICACIONES", targetId: "dashweb", icon: "🔧" },
 
   // Skills Catalog

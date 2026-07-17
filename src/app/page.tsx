@@ -53,6 +53,7 @@ import ConsultaContextoWidget from "@/components/ConsultaContextoWidget";
 import SkillsCatalogWidget from "@/components/SkillsCatalogWidget";
 import MiroFishReportsWidget from "@/components/MiroFishReportsWidget";
 import ReportesEstrategicosWidget from "@/components/ReportesEstrategicosWidget";
+import OptimizacionWidget from "@/components/OptimizacionWidget";
 import SalesPipelineWidget from "@/components/SalesPipelineWidget";
 import FinancialHealthWidget from "@/components/FinancialHealthWidget";
 import ClientStatusWidget from "@/components/ClientStatusWidget";
@@ -95,9 +96,12 @@ export default function Home() {
             <div className="section-divider" />
 
             {/* Zona 2 — Inteligencia IA */}
-            <SectionHeader number="01" title="Inteligencia IA" subtitle="Predicciones y optimización estratégica" />
+            <SectionHeader number="01" title="Inteligencia IA" subtitle="Predicciones, optimización temporal y estratégica" />
             <div id="mirofish-reports" className="col-6">
               <MiroFishReportsWidget />
+            </div>
+            <div id="optimizacion" className="col-6">
+              <OptimizacionWidget />
             </div>
             <div id="estrategia" className="col-6">
               <ReportesEstrategicosWidget />
@@ -123,6 +127,9 @@ export default function Home() {
                 </div>
                 <div id="adquisicion">
                   <ExternalAppWidget title="Dashboard de Adquisición" url="https://3mpm6kcgvmpz4.kimi.page/#panel" icon="📈" />
+                </div>
+                <div id="adq-talentos">
+                  <ExternalAppWidget title="Adq. Talentos" url="https://rr-adq-talentos.vercel.app/" icon="👥" />
                 </div>
                 <div id="dashweb">
                   <ExternalAppWidget title="DashWeb Core" url="https://dashweb-core-frontend-beta.up.railway.app/login" icon="🔧" />
