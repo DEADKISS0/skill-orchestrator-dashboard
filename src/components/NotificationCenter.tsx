@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { STATS } from "@/data/skillsCatalog";
-import { getBusinessContext } from "@/data/businessContext";
+import { fetchBusinessContext, formatCop } from "@/data/businessContext";
 
 interface Notification {
   id: string;
@@ -18,11 +18,12 @@ export default function NotificationCenter() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const ctx = getBusinessContext();
-      const [predRes, stratRes, optRes] = await Promise.all([
-        fetch("/reports/predicciones_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
-        fetch("/reports/estrategicos_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
-        fetch("/optimizacion/reports_index.json").then(r => r.json()).catch(() => ({ reports: {} })),
+      const ctx = await fetchBusinessContext();
+      const [predRes, stratRes, optRes, autoRes] = await Promise.all([
+        fetch("/reports/predicciones_index.json").then((r) => r.json()).catch(() => ({ reports: [] })),
+        fetch("/reports/estrategicos_index.json").then((r) => r.json()).catch(() => ({ reports: [] })),
+        fetch("/optimizacion/reports_index.json").then((r) => r.json()).catch(() => ({ reports: {} })),
+        fetch("/api/automation").then((r) => r.json()).catch(() => null),
       ]);
 
       const newNotifications: Notification[] = [];
@@ -47,6 +48,24 @@ export default function NotificationCenter() {
         });
       }
 
+      if (ctx.runwayMonths < 3) {
+        newNotifications.push({
+          id: "capital-months",
+          message: `Capital crítico: ~${ctx.runwayMonths.toFixed(1)} meses de burn (${formatCop(ctx.capitalCop)})`,
+          type: "error",
+          timestamp: new Date(),
+          read: false,
+        });
+      } else if (ctx.runwayMonths < 6) {
+        newNotifications.push({
+          id: "capital-months-warn",
+          message: `Capital en vigilancia: ~${Math.floor(ctx.runwayMonths)} meses de runway`,
+          type: "warning",
+          timestamp: new Date(),
+          read: false,
+        });
+      }
+
       if (STATS.installed !== 36) {
         newNotifications.push({
           id: "skills-sync",
@@ -55,6 +74,21 @@ export default function NotificationCenter() {
           timestamp: new Date(),
           read: false,
         });
+      }
+
+      if (autoRes?.jobs) {
+        const bad = (autoRes.jobs as Array<{ id: string; name: string; status: string }>).filter(
+          (j) => j.status === "error" || j.status === "warning"
+        );
+        for (const j of bad.slice(0, 3)) {
+          newNotifications.push({
+            id: `auto-${j.id}`,
+            message: `Automatización ${j.status}: ${j.name}`,
+            type: j.status === "error" ? "error" : "warning",
+            timestamp: new Date(),
+            read: false,
+          });
+        }
       }
 
       if (predRes.reports?.length > 0) {
@@ -103,14 +137,14 @@ export default function NotificationCenter() {
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const typeColors: Record<string, string> = {
@@ -131,21 +165,30 @@ export default function NotificationCenter() {
       >
         🔔
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-bold"
-            style={{ background: "var(--ember)", color: "var(--parchment)" }}>
+          <span
+            className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-bold"
+            style={{ background: "var(--ember)", color: "var(--parchment)" }}
+          >
             {unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 rounded-lg shadow-2xl z-50 overflow-hidden"
-          style={{ background: "var(--pitch-95)", border: "1px solid var(--ember-30)" }}>
+        <div
+          className="absolute right-0 top-full mt-2 w-80 rounded-lg shadow-2xl z-50 overflow-hidden"
+          style={{ background: "var(--pitch-95)", border: "1px solid var(--ember-30)" }}
+        >
           <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "var(--ember-20)" }}>
-            <span className="font-display text-sm tracking-wide" style={{ color: "var(--parchment)" }}>Alertas</span>
+            <span className="font-display text-sm tracking-wide" style={{ color: "var(--parchment)" }}>
+              Alertas
+            </span>
             {unreadCount > 0 && (
-              <button onClick={markAllAsRead} className="font-mono-label px-2 py-0.5 rounded"
-                style={{ color: "var(--ember-light)", background: "var(--ember-10)" }}>
+              <button
+                onClick={markAllAsRead}
+                className="font-mono-label px-2 py-0.5 rounded"
+                style={{ color: "var(--ember-light)", background: "var(--ember-10)" }}
+              >
                 Marcar leídas
               </button>
             )}
@@ -157,7 +200,7 @@ export default function NotificationCenter() {
                 Sin alertas
               </div>
             ) : (
-              notifications.map(n => (
+              notifications.map((n) => (
                 <div
                   key={n.id}
                   onClick={() => markAsRead(n.id)}
@@ -166,7 +209,9 @@ export default function NotificationCenter() {
                 >
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: typeColors[n.type] }} />
-                    <span className="text-xs" style={{ color: "var(--parchment)" }}>{n.message}</span>
+                    <span className="text-xs" style={{ color: "var(--parchment)" }}>
+                      {n.message}
+                    </span>
                   </div>
                   <div className="font-mono-label mt-1 ml-4" style={{ color: "var(--ash)" }}>
                     {n.timestamp.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}
@@ -177,7 +222,10 @@ export default function NotificationCenter() {
           </div>
 
           {lastCheck && (
-            <div className="px-4 py-2 font-mono-label text-right border-t" style={{ borderColor: "var(--ember-10)", color: "var(--ash)" }}>
+            <div
+              className="px-4 py-2 font-mono-label text-right border-t"
+              style={{ borderColor: "var(--ember-10)", color: "var(--ash)" }}
+            >
               Verificado: {lastCheck}
             </div>
           )}

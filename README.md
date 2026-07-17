@@ -18,7 +18,9 @@ Centro de comando interno de RR ALIADOS S.A.S. — Brutalismo Estratégico Colom
 | **Sidebar colapsable** | Rail de iconos en desktop con preferencia en localStorage |
 | **Command palette** | `Ctrl+K` — búsqueda + acciones rápidas (Wuunder, deploy, reportes) |
 | **Pipeline API** | `/api/pipeline` — deals Wuunder/Real Seguros en vivo |
-| **Automation health** | `/api/automation` — estado de scripts MiroFish, sync, deploy |
+| **Automation health** | `/api/automation` — frescura real de índices (mtime, stale >24h) |
+| **Finance snapshot** | `public/data/finance_snapshot.json` — capital/burn/Wuunder (sin CRM) |
+| **Escenario Wuunder** | Toggle local en Salud Financiera (Abierto/Cerrado → runway) |
 | **Meta 5 años** | Progreso hacia visión 2026→2031 desde `_HOJA_DE_RUTA.md` |
 | **PWA** | `manifest.json` con iconos brand + colores pitch/ember |
 
@@ -58,17 +60,34 @@ npm run dev
 | Variable | Uso |
 |----------|-----|
 | `OPENROUTER_API_KEY` / `GROQ_API_KEY` / `OPENCODE_API_KEY` | Chatbot IA (failover automático) |
+| `MIROFISH_WEBHOOK_URL` | Opcional — botón Regenerar dispara webhook |
+| `MIROFISH_WEBHOOK_SECRET` | Bearer opcional para el webhook |
 | `GOOGLE_ANALYTICS_PROPERTY_ID` | GA4 real |
 | `GOOGLE_SERVICE_ACCOUNT_KEY` | GA4 real |
 | `GOOGLE_CALENDAR_*` | Calendar real |
 
-Sin credenciales, GA/Calendar/Metricool muestran badge **DEMO/Mock**.
+Sin credenciales, GA/Calendar/Metricool muestran badge **DEMO/Mock**. Sin `MIROFISH_WEBHOOK_URL`, Regenerar copia comandos al clipboard.
 
 ## Sync de reportes
 
 ```powershell
 .\scripts\sync_reports.ps1
 ```
+
+### Cron (Windows Task Scheduler)
+
+| Campo | Valor |
+|-------|--------|
+| Trigger | Diario 06:00 y 18:00 (tras MiroFish) |
+| Programa | `powershell.exe` |
+| Argumentos | `-NoProfile -ExecutionPolicy Bypass -File "G:\Mi unidad\RR_Aliados\skill-orchestrator-dashboard\scripts\sync_reports.ps1"` |
+| Después | `vercel deploy --prod --yes` |
+
+`/api/automation` marca warning/error si los índices en `public/` tienen mtime >24h / >72h.
+
+### Caja (sin CRM)
+
+Editar `public/data/finance_snapshot.json` tras cambios de capital. El centro de alertas avisa si runway &lt;90 días o capital &lt;3 meses de burn.
 
 ## Estructura clave
 

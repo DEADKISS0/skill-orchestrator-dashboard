@@ -1,0 +1,10 @@
+{
+  "updatedAt": "2026-07-17",
+  "capitalCop": 5000000,
+  "monthlyBurnCop": 450000,
+  "wuunderDeadline": "2026-07-31",
+  "wuunderExpectedMrrCop": 3000000,
+  "clientsClosed": 0,
+  "clientsTargetQ3": 3,
+  "notes": "Snapshot manual. Actualizar tras eventos de capital o cierre Wuunder. No lee CRM."
+}

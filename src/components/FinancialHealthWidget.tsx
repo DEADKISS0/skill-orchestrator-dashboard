@@ -1,7 +1,12 @@
 "use client";
+import { useState, useEffect } from "react";
 import WidgetCard from "@/components/ui/WidgetCard";
 import { financialMetrics, teamCosts, keyDeadlines } from "@/data/financialHealth";
-import { getBusinessContext, formatCop } from "@/data/businessContext";
+import {
+  fetchBusinessContext,
+  formatCop,
+  type BusinessContext,
+} from "@/data/businessContext";
 
 const urgencyColors: Record<string, string> = {
   critico: "var(--danger)",
@@ -9,18 +14,117 @@ const urgencyColors: Record<string, string> = {
   medio: "var(--ember)",
 };
 
+const SCENARIO_KEY = "rr-wuunder-scenario";
+
 export default function FinancialHealthWidget() {
-  const ctx = getBusinessContext();
+  const [ctx, setCtx] = useState<BusinessContext | null>(null);
+  const [wuunderClosed, setWuunderClosed] = useState(false);
+
+  useEffect(() => {
+    try {
+      setWuunderClosed(localStorage.getItem(SCENARIO_KEY) === "yes");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchBusinessContext({ wuunderClosed }).then((c) => {
+      if (!cancelled) setCtx(c);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wuunderClosed]);
+
+  const toggleScenario = (closed: boolean) => {
+    setWuunderClosed(closed);
+    try {
+      localStorage.setItem(SCENARIO_KEY, closed ? "yes" : "no");
+    } catch {
+      /* ignore */
+    }
+  };
+
+  if (!ctx) {
+    return (
+      <WidgetCard title="Salud Financiera" icon="🏦" badge="Q3 2026">
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>Cargando snapshot…</p>
+      </WidgetCard>
+    );
+  }
+
+  const runwayDisplay = ctx.runwayMonths >= 999
+    ? "Cash+ (MRR ≥ burn)"
+    : `~${Math.floor(ctx.runwayMonths)} meses`;
 
   const liveMetrics = financialMetrics.map((m) => {
     if (m.label === "Capital Disponible") return { ...m, value: formatCop(ctx.capitalCop) };
-    if (m.label === "Runway Estimado") return { ...m, value: `~${Math.floor(ctx.runwayDays / 30)} meses`, subtitle: `${ctx.runwayDays} días · sin ingresos nuevos` };
-    if (m.label === "Meta Q3 2026") return { ...m, value: `${ctx.clientsClosed}/${ctx.clientsTargetQ3} clientes`, subtitle: ctx.meta5Year.q3MrrTarget + " MRR meta" };
+    if (m.label === "Runway Estimado") {
+      return {
+        ...m,
+        value: runwayDisplay,
+        subtitle: wuunderClosed
+          ? `${ctx.runwayDays >= 9999 ? "∞" : ctx.runwayDays} días · escenario Wuunder cerrado`
+          : `${ctx.runwayDays} días · sin ingresos nuevos`,
+      };
+    }
+    if (m.label === "Meta Q3 2026") {
+      return {
+        ...m,
+        value: `${ctx.clientsClosed}/${ctx.clientsTargetQ3} clientes`,
+        subtitle: ctx.meta5Year.q3MrrTarget + " MRR meta",
+      };
+    }
     return m;
   });
 
   return (
     <WidgetCard title="Salud Financiera" icon="🏦" badge="Q3 2026">
+      <div
+        className="flex items-center justify-between gap-2 mb-3 p-2 rounded-lg"
+        style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)" }}
+        data-internal-only
+      >
+        <div className="min-w-0">
+          <div className="font-mono-label" style={{ color: "var(--text-primary)" }}>
+            Escenario Wuunder
+          </div>
+          <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+            Local · MRR est. {formatCop(ctx.wuunderExpectedMrrCop)}/mes
+            {ctx.financeUpdatedAt ? ` · snap ${ctx.financeUpdatedAt}` : ""}
+          </div>
+        </div>
+        <div className="flex gap-1 flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => toggleScenario(false)}
+            className="text-[10px] px-2 py-1 rounded"
+            style={{
+              background: !wuunderClosed ? "var(--ember-20)" : "transparent",
+              color: !wuunderClosed ? "var(--ember-light)" : "var(--text-muted)",
+              border: "1px solid var(--border-subtle)",
+            }}
+          >
+            Abierto
+          </button>
+          <button
+            type="button"
+            onClick={() => toggleScenario(true)}
+            className="text-[10px] px-2 py-1 rounded"
+            style={{
+              background: wuunderClosed ? "var(--success)" : "transparent",
+              color: wuunderClosed ? "var(--parchment)" : "var(--text-muted)",
+              border: "1px solid var(--border-subtle)",
+              opacity: wuunderClosed ? 0.9 : 1,
+            }}
+          >
+            Cerrado
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
         {liveMetrics.slice(0, 6).map((m) => (
           <div
