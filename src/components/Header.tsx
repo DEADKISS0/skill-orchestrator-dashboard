@@ -86,7 +86,7 @@ export default function Header({
             title="Modo presentación para cliente o inversor (atajo: P)"
             aria-pressed={isPresentationMode}
           >
-            {isPresentationMode ? "Salir del Pitch" : "Presentar"}
+            {isPresentationMode ? "Salir del Pitch" : "Modo Pitch"}
           </button>
           <NotificationCenter />
           <ThemeToggle />
