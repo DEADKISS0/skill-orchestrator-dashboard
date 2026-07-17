@@ -177,7 +177,7 @@ export async function fetchGa4Bundle(propertyId: string, serviceAccountKey: stri
   const avgDur = metricValue(today, 4);
 
   const pageRows = (pagesReport.rows as unknown[]) || [];
-  const pageTotal = pageRows.reduce((acc, row) => acc + metricValue(row, 0), 0) || 1;
+  const pageTotal = pageRows.reduce<number>((acc, row) => acc + metricValue(row, 0), 0) || 1;
   const topPages = pageRows.map((row) => {
     const views = metricValue(row, 0);
     return {
@@ -188,7 +188,7 @@ export async function fetchGa4Bundle(propertyId: string, serviceAccountKey: stri
   });
 
   const sourceRows = (sourcesReport.rows as unknown[]) || [];
-  const sourceTotal = sourceRows.reduce((acc, row) => acc + metricValue(row, 0), 0) || 1;
+  const sourceTotal = sourceRows.reduce<number>((acc, row) => acc + metricValue(row, 0), 0) || 1;
   const trafficSources = sourceRows.map((row) => {
     const n = metricValue(row, 0);
     return {
