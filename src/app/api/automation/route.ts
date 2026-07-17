@@ -218,6 +218,49 @@ export async function GET() {
     },
   ];
 
+  const ecosystemTargets = [
+    { id: "cotizador", name: "RR Cotizador", url: "https://rr-kotizador.vercel.app/" },
+    { id: "skills-hub", name: "Skills Hub", url: "https://rr-skills-hub.vercel.app/" },
+    { id: "adq-talentos", name: "Adq. Talento", url: "https://rr-adq-talentos.vercel.app/" },
+  ];
+
+  const ecoJobs = await Promise.all(
+    ecosystemTargets.map(async (t) => {
+      const start = Date.now();
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 6000);
+        const resp = await fetch(t.url, {
+          method: "GET",
+          signal: ctrl.signal,
+          redirect: "follow",
+          cache: "no-store",
+        });
+        clearTimeout(timer);
+        const ms = Date.now() - start;
+        const status: AutomationJob["status"] =
+          resp.status >= 200 && resp.status < 400 ? "ok" : resp.status < 500 ? "warning" : "error";
+        return {
+          id: `eco-${t.id}`,
+          name: `Ecosistema: ${t.name}`,
+          status,
+          lastRun: formatLastRun(new Date()),
+          detail: `HTTP ${resp.status} · ${ms}ms (health ping, sin CRM)`,
+        } satisfies AutomationJob;
+      } catch {
+        return {
+          id: `eco-${t.id}`,
+          name: `Ecosistema: ${t.name}`,
+          status: "error" as const,
+          lastRun: formatLastRun(new Date()),
+          detail: `Ping falló / timeout · ${t.url}`,
+        } satisfies AutomationJob;
+      }
+    })
+  );
+
+  jobs.push(...ecoJobs);
+
   const summary = {
     ok: jobs.filter((j) => j.status === "ok").length,
     warning: jobs.filter((j) => j.status === "warning").length,

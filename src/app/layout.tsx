@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { PresentationModeProvider } from "@/contexts/PresentationModeContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,7 +43,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <PresentationModeProvider>{children}</PresentationModeProvider>
+          <PresentationModeProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </PresentationModeProvider>
         </ThemeProvider>
       </body>
     </html>

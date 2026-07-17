@@ -69,6 +69,10 @@ export function PresentationModeProvider({ children }: { children: ReactNode }) 
       if (!t) return;
       const tag = t.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || t.isContentEditable) return;
+      // Roles pitch/client force pitch — no toggle via keyboard
+      if (document.body.dataset.rrRole === "pitch" || document.body.dataset.rrRole === "client") {
+        return;
+      }
       e.preventDefault();
       togglePresentationMode();
     };

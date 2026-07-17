@@ -20,6 +20,9 @@ Centro de comando interno de RR ALIADOS S.A.S. — Brutalismo Estratégico Colom
 | **GA4** | `/api/analytics` — Data API real si hay service account; si no, DEMO vacío (sin random) |
 | **News** | `/api/news` — Google News RSS live + cache `public/data/news_feed.json` |
 | **Metricool** | `/api/metricool` — stub listo; sin token = 0 métricas (no fake followers) |
+| **Auth roles** | Cookie HMAC `ops`/`pitch`/`client` — middleware bloquea APIs sensibles |
+| **Shell skills** | Badge Shell + deep-link Skills Hub (cuarentena teatro) |
+| **Ecosystem health** | Ping Cotizador / Skills Hub / Adq Talento en `/api/automation` |
 | **Sidebar colapsable** | Rail de iconos en desktop con preferencia en localStorage |
 | **Command palette** | `Ctrl+K` — búsqueda + acciones rápidas (Wuunder, deploy, reportes) |
 | **Pipeline API** | `/api/pipeline` — deals Wuunder/Real Seguros en vivo |
@@ -71,6 +74,10 @@ npm run dev
 | `GOOGLE_SERVICE_ACCOUNT_KEY` | JSON completo de service account (Viewer en GA4) |
 | `METRICOOL_API_TOKEN` | Opcional — habilita stub Metricool configurado |
 | `METRICOOL_BRAND_ID` | Opcional — brand Metricool |
+| `AUTH_SECRET` | Activa auth por roles (HMAC cookie). Sin esto = open/ops |
+| `AUTH_OPS_PASSWORD` | Clave rol ops (APIs + UI completa) |
+| `AUTH_PITCH_PASSWORD` | Clave rol pitch (Pitch Mode forzado, sin APIs sensibles) |
+| `AUTH_CLIENT_PASSWORD` | Clave rol client (igual pitch) |
 | `GOOGLE_CALENDAR_*` | Calendar (DEMO operativo si falta) |
 
 Sin credenciales, GA/Calendar/Metricool muestran badge **DEMO/Mock**. Sin `MIROFISH_WEBHOOK_URL`, Regenerar copia comandos al clipboard.

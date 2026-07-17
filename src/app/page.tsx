@@ -57,9 +57,10 @@ import SalesPipelineWidget from "@/components/SalesPipelineWidget";
 import FinancialHealthWidget from "@/components/FinancialHealthWidget";
 import ClientStatusWidget from "@/components/ClientStatusWidget";
 import CompetitorWidget from "@/components/CompetitorWidget";
-import ExternalAppWidget from "@/components/ExternalAppWidget";
 import Meta5YearWidget from "@/components/Meta5YearWidget";
 import AutomationHealthWidget from "@/components/AutomationHealthWidget";
+import EcosystemAppsGrid from "@/components/EcosystemAppsGrid";
+import ShellSkillCard from "@/components/ui/ShellSkillCard";
 
 const SIDEBAR_KEY = "rr-sidebar-collapsed";
 
@@ -139,31 +140,9 @@ export default function Home() {
             <div className="section-divider" />
 
             {/* Zona 3 — Ecosistema */}
-            <SectionHeader number="02" title="Ecosistema" subtitle="Apps corporativas integradas" />
+            <SectionHeader number="02" title="Ecosistema" subtitle="Apps corporativas + deep-links accionables" />
             <div className="col-12">
-              <div className="apps-grid">
-                <div id="company-hub">
-                  <ExternalAppWidget title="Company Hub" url="https://x3hlysjfyb4ta.kimi.page/" icon="🏢" />
-                </div>
-                <div id="cotizador">
-                  <ExternalAppWidget title="RR Cotizador" url="https://rr-kotizador.vercel.app/" icon="🧮" />
-                </div>
-                <div id="altruismo">
-                  <ExternalAppWidget title="Altruismo" url="https://altruismo-web.vercel.app/es" icon="🤝" />
-                </div>
-                <div id="skills-hub-app">
-                  <ExternalAppWidget title="RR Skills Hub" url="https://rr-skills-hub.vercel.app/" icon="📚" />
-                </div>
-                <div id="adquisicion">
-                  <ExternalAppWidget title="Adquisición Clientes" url="https://3mpm6kcgvmpz4.kimi.page/#panel" icon="📈" />
-                </div>
-                <div id="adq-talentos">
-                  <ExternalAppWidget title="Adquisición Talento" url="https://rr-adq-talentos.vercel.app/" icon="👥" />
-                </div>
-                <div id="dashweb">
-                  <ExternalAppWidget title="DashWeb Core" url="https://dashweb-core-frontend-beta.up.railway.app/login" icon="🔧" />
-                </div>
-              </div>
+              <EcosystemAppsGrid />
             </div>
 
             <div className="section-divider" />
@@ -267,17 +246,61 @@ export default function Home() {
               </CollapsibleSection>
 
               <CollapsibleSection title="META / SKILLS" icon="🧠" sectionId="meta-skills" defaultOpen={false}>
-                <div id="find-skills"><FindSkillsWidget /></div>
-                <div id="skill-builder"><SkillBuilderWidget /></div>
-                <div id="skill-creator"><SkillCreatorWidget /></div>
-                <div id="masters"><SkillFromMastersWidget /></div>
-                <div id="installer"><SkillInstallerWidget /></div>
-                <div id="mcp"><MCPWidget /></div>
-                <div id="a2a"><MultiAgentWidget /></div>
-                <div id="consulta"><ConsultaContextoWidget /></div>
-                <div id="superpowers"><SuperpowersWidget /></div>
-                <div id="orchestrator"><SkillOrchestratorWidget /></div>
-                <div id="warpgrep"><WarpgrepsWidget /></div>
+                <div id="find-skills">
+                  <ShellSkillCard title="Find Skills" skillSlug="find-skills" icon="🔎">
+                    <FindSkillsWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="skill-builder">
+                  <ShellSkillCard title="Skill Builder" skillSlug="skill-builder" icon="🧱">
+                    <SkillBuilderWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="skill-creator">
+                  <ShellSkillCard title="Skill Creator" skillSlug="skill-creator" icon="✨">
+                    <SkillCreatorWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="masters">
+                  <ShellSkillCard title="Skill From Masters" skillSlug="skill-from-masters" icon="🎓">
+                    <SkillFromMastersWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="installer">
+                  <ShellSkillCard title="Skill Installer" skillSlug="skill-installer" icon="📦">
+                    <SkillInstallerWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="mcp">
+                  <ShellSkillCard title="MCP Client" skillSlug="mcp-client" icon="🔌">
+                    <MCPWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="a2a">
+                  <ShellSkillCard title="Multi-Agent (A2A)" skillSlug="multi-agent-orchestrator" icon="🤖" quarantine={false}>
+                    <MultiAgentWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="consulta">
+                  <ShellSkillCard title="Consulta Contexto" skillSlug="consulta-contexto" icon="❓">
+                    <ConsultaContextoWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="superpowers">
+                  <ShellSkillCard title="Superpowers" skillSlug="superpowers" icon="⚡">
+                    <SuperpowersWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="orchestrator">
+                  <ShellSkillCard title="Skill Orchestrator" skillSlug="orquestador" icon="🎯" quarantine={false}>
+                    <SkillOrchestratorWidget />
+                  </ShellSkillCard>
+                </div>
+                <div id="warpgrep">
+                  <ShellSkillCard title="Warpgrep" skillSlug="warpgrep" icon="📡">
+                    <WarpgrepsWidget />
+                  </ShellSkillCard>
+                </div>
               </CollapsibleSection>
             </div>
 

@@ -5,6 +5,7 @@ import ThemeToggle from "./ThemeToggle";
 import GlobalSearch from "./GlobalSearch";
 import NotificationCenter from "./NotificationCenter";
 import { usePresentationMode } from "@/contexts/PresentationModeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import PitchPackButton from "@/components/ui/PitchPackButton";
 
 interface HeaderProps {
@@ -19,6 +20,15 @@ export default function Header({
   onSidebarCollapseToggle,
 }: HeaderProps) {
   const { isPresentationMode, togglePresentationMode } = usePresentationMode();
+  const { role, forcesPitch, openMode, logout } = useAuth();
+
+  const onPitchClick = () => {
+    if (forcesPitch && isPresentationMode) {
+      logout();
+      return;
+    }
+    togglePresentationMode();
+  };
 
   return (
     <>
@@ -81,14 +91,32 @@ export default function Header({
 
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <GlobalSearch />
-          <button
-            onClick={togglePresentationMode}
-            className="btn-ghost !py-1.5 !px-2.5 hidden sm:inline-flex"
-            title="Modo presentación para cliente o inversor (atajo: P)"
-            aria-pressed={isPresentationMode}
+          <span
+            className="hidden md:inline-flex font-mono-label px-2 py-1 rounded text-[10px]"
+            style={{
+              background: "var(--void-30)",
+              border: "1px solid var(--border)",
+              color: "var(--ember-light)",
+            }}
+            title={openMode ? "AUTH_SECRET no configurado" : "Rol de sesión"}
           >
-            {isPresentationMode ? "Salir del Pitch" : "Modo Pitch"}
-          </button>
+            {openMode ? "open/ops" : role}
+          </span>
+          {!forcesPitch && (
+            <button
+              onClick={onPitchClick}
+              className="btn-ghost !py-1.5 !px-2.5 hidden sm:inline-flex"
+              title="Modo presentación para cliente o inversor (atajo: P)"
+              aria-pressed={isPresentationMode}
+            >
+              {isPresentationMode ? "Salir del Pitch" : "Modo Pitch"}
+            </button>
+          )}
+          {!openMode && (
+            <button onClick={logout} className="btn-ghost !py-1 !px-2 text-[10px] hidden sm:inline-flex" title="Cerrar sesión">
+              Salir
+            </button>
+          )}
           <NotificationCenter />
           <ThemeToggle />
           <div
@@ -120,13 +148,15 @@ export default function Header({
           }}
         >
           <p className="text-xs sm:text-sm font-light min-w-0">
-            <span className="font-mono-label" style={{ color: "var(--ember-light)" }}>Modo Pitch</span>
+            <span className="font-mono-label" style={{ color: "var(--ember-light)" }}>
+              {forcesPitch ? `Rol ${role}` : "Modo Pitch"}
+            </span>
             {" — "}vista para cliente/inversor. Se ocultan tools internas.
           </p>
           <div className="flex items-center gap-2 flex-shrink-0">
             <PitchPackButton label="⬇ Pack Pitch" compact />
-            <button onClick={togglePresentationMode} className="btn-ghost !py-1 !px-2 text-xs">
-              Salir
+            <button onClick={onPitchClick} className="btn-ghost !py-1 !px-2 text-xs">
+              {forcesPitch ? "Logout" : "Salir"}
             </button>
           </div>
         </div>
