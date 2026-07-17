@@ -18,12 +18,6 @@ export default function HeroSection() {
       targetId: "mirofish-reports",
     },
     {
-      icon: "📋",
-      title: "Optimización",
-      desc: "Reportes diarios, semanales y mensuales de optimización temporal.",
-      targetId: "optimizacion",
-    },
-    {
       icon: "🎯",
       title: "Estrategia",
       desc: "Optimización estratégica contra la meta 5-year de RR ALIADOS.",

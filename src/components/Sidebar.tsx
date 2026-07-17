@@ -6,17 +6,31 @@ interface SidebarProps {
   onSelect: (w: string) => void;
   isOpen?: boolean;
   onClose?: () => void;
+  collapsed?: boolean;
+  onCollapseToggle?: () => void;
 }
 
 const comando = ["Inicio", "Métricas", "Pipeline", "Finanzas", "Calendario", "Tareas", "Comandos", "Exportar"];
-const reportes = ["MiroFish Reports", "Optimización", "Estrategia"];
-const aplicaciones = ["Company Hub", "Cotizador", "Altruismo", "Skills Hub App", "Adquisición", "Adq. Talentos", "DashWeb", "Skills Catalog"];
+const reportes = ["MiroFish Reports", "Estrategia"];
+const aplicaciones = ["Company Hub", "Cotizador", "Altruismo", "Skills Hub App", "Adquisición Clientes", "Adquisición Talento", "DashWeb", "Skills Catalog"];
 const dataAnalytics = ["Excel Widget", "Google Maps", "Google News", "Amazon Analyzer", "Metricool"];
 const research = ["Web Research", "Firecrawl", "NotebookLM"];
 const devQA = ["Karpathy Rules", "Debugging", "Verification", "QA Auditor", "Loop Mode", "Quality Loop"];
 const content = ["X Publisher", "YouTube Clip", "Remotion", "Cronograma"];
 const strategy = ["Brainstorming", "Grill-Me", "Writing Plans", "Benchmarking", "Interface Designing"];
 const meta = ["Find Skills", "Skill Builder", "Skill Creator", "Masters", "Installer", "MCP", "A2A", "Consulta", "Superpowers", "Orchestrator", "Warpgrep"];
+
+const GROUP_ICONS: Record<string, string> = {
+  Comando: "⌘",
+  "Reportes IA": "📊",
+  Aplicaciones: "▦",
+  "Data & Analytics": "📈",
+  Research: "🔍",
+  "Dev & QA": "⚙️",
+  Content: "✍️",
+  Strategy: "🎯",
+  "Meta / Skills": "🧠",
+};
 
 const TOOL_SECTIONS: Record<string, string> = {
   "Excel Widget": "data-analytics",
@@ -65,14 +79,13 @@ const NAV_IDS: Record<string, string> = {
   Comandos: "command-center",
   Exportar: "export-widget",
   "MiroFish Reports": "mirofish-reports",
-  Optimización: "optimizacion",
   Estrategia: "estrategia",
   "Company Hub": "company-hub",
   Cotizador: "cotizador",
   Altruismo: "altruismo",
   "Skills Hub App": "skills-hub-app",
-  Adquisición: "adquisicion",
-  "Adq. Talentos": "adq-talentos",
+  "Adquisición Clientes": "adquisicion",
+  "Adquisición Talento": "adq-talentos",
   DashWeb: "dashweb",
   "Skills Catalog": "skills-catalog",
 };
@@ -87,24 +100,43 @@ function skillToId(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function NavItem({ name, active, onClick }: { name: string; active: boolean; onClick: () => void }) {
+function NavItem({
+  name,
+  active,
+  onClick,
+  collapsed,
+}: {
+  name: string;
+  active: boolean;
+  onClick: () => void;
+  collapsed?: boolean;
+}) {
+  const short = name.slice(0, 2).toUpperCase();
   return (
     <button
       onClick={onClick}
-      className={`nav-item ${active ? "active" : ""}`}
+      className={`nav-item ${active ? "active" : ""} ${collapsed ? "nav-item-collapsed" : ""}`}
+      title={name}
+      aria-label={name}
     >
-      {name}
+      {collapsed ? short : name}
     </button>
   );
 }
 
-export default function Sidebar({ activeWidget, onSelect, isOpen = true, onClose }: SidebarProps) {
+export default function Sidebar({
+  activeWidget,
+  onSelect,
+  isOpen = true,
+  onClose,
+  collapsed = false,
+  onCollapseToggle,
+}: SidebarProps) {
   const handleClick = (name: string) => {
     if (name === "Inicio") {
       onSelect("All");
       setTimeout(() => {
-        const el = document.getElementById("dashboard");
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 0);
       if (onClose) onClose();
       return;
@@ -116,90 +148,135 @@ export default function Sidebar({ activeWidget, onSelect, isOpen = true, onClose
     }
     const id = skillToId(name);
     setTimeout(() => {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, sectionId ? 150 : 0);
     if (onClose) onClose();
   };
 
-  const sidebarContent = (
+  const renderGroups = (isCollapsed: boolean) => {
+    if (isCollapsed) {
+      const jump = (first: string) => () => handleClick(first);
+      return (
+        <div className="flex flex-col gap-1 items-center">
+          {Object.entries(GROUP_ICONS).map(([label, icon]) => {
+            const first =
+              label === "Comando" ? "Inicio" :
+              label === "Reportes IA" ? "MiroFish Reports" :
+              label === "Aplicaciones" ? "Company Hub" :
+              label === "Data & Analytics" ? "Excel Widget" :
+              label === "Research" ? "Web Research" :
+              label === "Dev & QA" ? "Karpathy Rules" :
+              label === "Content" ? "X Publisher" :
+              label === "Strategy" ? "Brainstorming" : "Find Skills";
+            return (
+              <button
+                key={label}
+                type="button"
+                className="nav-item nav-item-collapsed"
+                title={label}
+                aria-label={label}
+                onClick={jump(first)}
+              >
+                {icon}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <SidebarGroup label="Comando" defaultOpen={true}>
+          {comando.map((s) => (
+            <NavItem key={s} name={s} active={s === "Inicio" ? activeWidget === "All" : activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Reportes IA" defaultOpen={true}>
+          {reportes.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Aplicaciones" defaultOpen={true}>
+          {aplicaciones.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Data & Analytics">
+          {dataAnalytics.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Research">
+          {research.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Dev & QA">
+          {devQA.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Content">
+          {content.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Strategy">
+          {strategy.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+        <SidebarGroup label="Meta / Skills">
+          {meta.map((s) => (
+            <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
+          ))}
+        </SidebarGroup>
+      </>
+    );
+  };
+
+  const sidebarContent = (isCollapsed: boolean) => (
     <aside
-      className="h-full overflow-y-auto py-4 px-3 flex flex-col gap-1"
+      className="h-full overflow-y-auto py-4 px-2 flex flex-col gap-1 transition-all"
       style={{
-        width: "var(--sidebar-width)",
+        width: isCollapsed ? "var(--sidebar-width-collapsed)" : "var(--sidebar-width)",
         borderRight: "1px solid var(--border)",
         background: "var(--bg-glass)",
       }}
     >
-      <div className="px-2 pb-3 mb-2" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-        <span className="font-mono-label" style={{ color: "var(--ember)" }}>Navegación</span>
+      <div
+        className={`pb-3 mb-2 flex items-center ${isCollapsed ? "justify-center" : "justify-between px-2"}`}
+        style={{ borderBottom: "1px solid var(--border-subtle)" }}
+      >
+        {!isCollapsed && (
+          <span className="font-mono-label" style={{ color: "var(--ember)" }}>Navegación</span>
+        )}
+        {onCollapseToggle && (
+          <button
+            type="button"
+            className="btn-ghost !p-1.5 !text-xs hidden md:inline-flex"
+            onClick={onCollapseToggle}
+            title={isCollapsed ? "Expandir menú" : "Colapsar menú"}
+            aria-label={isCollapsed ? "Expandir menú" : "Colapsar menú"}
+          >
+            {isCollapsed ? "»" : "«"}
+          </button>
+        )}
       </div>
-
-      <SidebarGroup label="Comando" defaultOpen={true}>
-        {comando.map((s) => (
-          <NavItem key={s} name={s} active={s === "Inicio" ? activeWidget === "All" : activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Reportes IA" defaultOpen={true}>
-        {reportes.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Aplicaciones" defaultOpen={true}>
-        {aplicaciones.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Data & Analytics">
-        {dataAnalytics.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Research">
-        {research.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Dev & QA">
-        {devQA.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Content">
-        {content.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Strategy">
-        {strategy.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
-
-      <SidebarGroup label="Meta / Skills">
-        {meta.map((s) => (
-          <NavItem key={s} name={s} active={activeWidget === s} onClick={() => handleClick(s)} />
-        ))}
-      </SidebarGroup>
+      {renderGroups(isCollapsed)}
     </aside>
   );
 
   return (
     <>
-      <div className="hidden md:block flex-shrink-0">{sidebarContent}</div>
+      <div className="hidden md:block flex-shrink-0">{sidebarContent(collapsed)}</div>
 
       {isOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
           <div className="relative h-full shadow-2xl" style={{ background: "var(--bg-glass)" }}>
-            {sidebarContent}
+            {sidebarContent(false)}
           </div>
         </div>
       )}

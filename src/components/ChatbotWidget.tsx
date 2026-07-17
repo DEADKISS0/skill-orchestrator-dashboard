@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { usePresentationMode } from "@/contexts/PresentationModeContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -9,6 +10,7 @@ interface Message {
 }
 
 export default function ChatbotWidget() {
+  const { isPresentationMode } = usePresentationMode();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function ChatbotWidget() {
     try {
       const stored = localStorage.getItem("rr-chat-history");
       if (stored) setMessages(JSON.parse(stored));
-    } catch (e) {
+    } catch {
       localStorage.removeItem("rr-chat-history");
     }
   }, []);
@@ -33,6 +35,8 @@ export default function ChatbotWidget() {
       localStorage.setItem("rr-chat-history", JSON.stringify(messages.slice(-20)));
     }
   }, [messages]);
+
+  if (isPresentationMode) return null;
 
   const generateReport = async (topic: string) => {
     setLoading(true);

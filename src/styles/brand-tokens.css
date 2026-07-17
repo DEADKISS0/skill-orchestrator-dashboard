@@ -41,6 +41,7 @@
   --grid-gap-lg: 1.5rem;
   --max-width: 1440px;
   --sidebar-width: 15rem;
+  --sidebar-width-collapsed: 3.75rem;
   --header-height: 4rem;
 
   /* Radius */

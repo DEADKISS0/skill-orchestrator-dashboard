@@ -8,10 +8,9 @@ export default function ExportWidget() {
     setExporting(true);
     try {
       // Fetch report data
-      const [predRes, stratRes, optRes] = await Promise.all([
+      const [predRes, stratRes] = await Promise.all([
         fetch("/reports/predicciones_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
         fetch("/reports/estrategicos_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
-        fetch("/optimizacion/reports_index.json").then(r => r.json()).catch(() => ({ reports: {} })),
       ]);
 
       // Build CSV content
@@ -23,13 +22,6 @@ export default function ExportWidget() {
       
       stratRes.reports?.forEach((r: any) => {
         csv += `Estratégico,${r.date},"${r.label}",${r.summary?.progreso || "N/A"},${r.summary?.acciones || 0},${r.summary?.urgentes || 0},N/A,N/A\n`;
-      });
-
-      const optReports = optRes.reports || {};
-      (["diarios", "semanales", "mensuales", "dashboards"] as const).forEach((tab) => {
-        optReports[tab]?.forEach((r: { date: string; name: string; type: string }) => {
-          csv += `Optimización ${tab},${r.date},"${r.name}",N/A,N/A,N/A,N/A,N/A\n`;
-        });
       });
 
       // Download CSV
@@ -50,27 +42,19 @@ export default function ExportWidget() {
   const exportToJSON = async () => {
     setExporting(true);
     try {
-      const [predRes, stratRes, optRes] = await Promise.all([
+      const [predRes, stratRes] = await Promise.all([
         fetch("/reports/predicciones_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
         fetch("/reports/estrategicos_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
-        fetch("/optimizacion/reports_index.json").then(r => r.json()).catch(() => ({ reports: {} })),
       ]);
-
-      const optReports = optRes.reports || {};
-      const optimizationFlat = (["diarios", "semanales", "mensuales", "dashboards"] as const).flatMap(
-        (tab) => (optReports[tab] || []).map((r: { date: string; name: string; type: string; path: string }) => ({ ...r, tab }))
-      );
 
       const data = {
         exportDate: new Date().toISOString(),
         company: "RR ALIADOS S.A.S.",
         predictions: predRes.reports || [],
         strategic: stratRes.reports || [],
-        optimization: optimizationFlat,
         summary: {
           totalPredictionReports: predRes.reports?.length || 0,
           totalStrategicReports: stratRes.reports?.length || 0,
-          totalOptimizationReports: optimizationFlat.length,
         },
       };
 

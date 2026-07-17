@@ -4,17 +4,15 @@ import { STATS } from "@/data/skillsCatalog";
 export default function Footer() {
   return (
     <footer
-      className="relative z-10 flex flex-col gap-3"
+      className="col-12 relative z-10"
       style={{
-        padding: "0.875rem var(--page-x) 1rem",
+        marginTop: "1.5rem",
+        padding: "1rem 0 0.25rem",
         borderTop: "1px solid var(--border)",
         color: "var(--text-muted)",
-        background: "var(--bg-glass)",
-        backdropFilter: "blur(16px)",
       }}
     >
-      <div className="glow-line w-full max-w-md mx-auto opacity-40" />
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
         <span className="font-mono-label text-[10px] text-center sm:text-left">
           RR ALIADOS S.A.S. · NIT 902.036.366 · Medellín, Colombia
         </span>

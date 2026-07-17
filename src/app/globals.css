@@ -442,12 +442,21 @@ body {
 }
 
 /* ── Presentation mode ── */
-body[data-presentation="true"] [data-internal-only] {
+body[data-presentation="true"] [data-internal-only],
+body[data-presentation="true"] [data-pitch-hide] {
   display: none !important;
 }
 
 body[data-presentation="true"] .dashboard-grid {
   max-width: 1200px;
+}
+
+.nav-item-collapsed {
+  text-align: center;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+  font-size: 0.85rem;
+  border-left: none;
 }
 
 .widget-highlight {

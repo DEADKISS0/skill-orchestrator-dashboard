@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
@@ -53,7 +53,6 @@ import ConsultaContextoWidget from "@/components/ConsultaContextoWidget";
 import SkillsCatalogWidget from "@/components/SkillsCatalogWidget";
 import MiroFishReportsWidget from "@/components/MiroFishReportsWidget";
 import ReportesEstrategicosWidget from "@/components/ReportesEstrategicosWidget";
-import OptimizacionWidget from "@/components/OptimizacionWidget";
 import SalesPipelineWidget from "@/components/SalesPipelineWidget";
 import FinancialHealthWidget from "@/components/FinancialHealthWidget";
 import ClientStatusWidget from "@/components/ClientStatusWidget";
@@ -62,25 +61,58 @@ import ExternalAppWidget from "@/components/ExternalAppWidget";
 import Meta5YearWidget from "@/components/Meta5YearWidget";
 import AutomationHealthWidget from "@/components/AutomationHealthWidget";
 
+const SIDEBAR_KEY = "rr-sidebar-collapsed";
+
 export default function Home() {
   const [activeWidget, setActiveWidget] = useState("All");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   useActiveWidgetHighlight(activeWidget);
+
+  useEffect(() => {
+    try {
+      setSidebarCollapsed(localStorage.getItem(SIDEBAR_KEY) === "1");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SIDEBAR_KEY, next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="flex flex-col h-screen relative" style={{ background: "var(--bg-primary)" }}>
       <DashboardBackground />
-      <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <Header
+        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarCollapseToggle={toggleSidebarCollapse}
+      />
       <div className="flex flex-1 overflow-hidden relative z-10">
         <Sidebar
           activeWidget={activeWidget}
           onSelect={setActiveWidget}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          collapsed={sidebarCollapsed}
+          onCollapseToggle={toggleSidebarCollapse}
         />
         <main
           className="flex-1 overflow-y-auto py-6"
-          style={{ paddingLeft: "var(--page-x)", paddingRight: "var(--page-x)" }}
+          style={{
+            paddingLeft: "var(--page-x)",
+            paddingRight: "var(--page-x)",
+            paddingBottom: "5rem",
+          }}
         >
           <div className="dashboard-grid">
 
@@ -96,12 +128,9 @@ export default function Home() {
             <div className="section-divider" />
 
             {/* Zona 2 — Inteligencia IA */}
-            <SectionHeader number="01" title="Inteligencia IA" subtitle="Predicciones, optimización temporal y estratégica" />
+            <SectionHeader number="01" title="Inteligencia IA" subtitle="Predicciones y optimización estratégica" />
             <div id="mirofish-reports" className="col-6">
               <MiroFishReportsWidget />
-            </div>
-            <div id="optimizacion" className="col-6">
-              <OptimizacionWidget />
             </div>
             <div id="estrategia" className="col-6">
               <ReportesEstrategicosWidget />
@@ -126,10 +155,10 @@ export default function Home() {
                   <ExternalAppWidget title="RR Skills Hub" url="https://rr-skills-hub.vercel.app/" icon="📚" />
                 </div>
                 <div id="adquisicion">
-                  <ExternalAppWidget title="Dashboard de Adquisición" url="https://3mpm6kcgvmpz4.kimi.page/#panel" icon="📈" />
+                  <ExternalAppWidget title="Adquisición Clientes" url="https://3mpm6kcgvmpz4.kimi.page/#panel" icon="📈" />
                 </div>
                 <div id="adq-talentos">
-                  <ExternalAppWidget title="Adq. Talentos" url="https://rr-adq-talentos.vercel.app/" icon="👥" />
+                  <ExternalAppWidget title="Adquisición Talento" url="https://rr-adq-talentos.vercel.app/" icon="👥" />
                 </div>
                 <div id="dashweb">
                   <ExternalAppWidget title="DashWeb Core" url="https://dashweb-core-frontend-beta.up.railway.app/login" icon="🔧" />
@@ -155,16 +184,16 @@ export default function Home() {
             <div id="calendar-widget" className="col-3">
               <CalendarWidget />
             </div>
-            <div id="task-monitor" className="col-3">
+            <div id="task-monitor" className="col-3" data-pitch-hide>
               <TaskMonitorWidget />
             </div>
-            <div id="command-center" className="col-3">
+            <div id="command-center" className="col-3" data-pitch-hide>
               <CommandCenterWidget />
             </div>
-            <div id="export-widget" className="col-3">
+            <div id="export-widget" className="col-3" data-pitch-hide>
               <ExportWidget />
             </div>
-            <div id="automation-health" className="col-12">
+            <div id="automation-health" className="col-12" data-pitch-hide>
               <AutomationHealthWidget />
             </div>
 
@@ -185,75 +214,77 @@ export default function Home() {
               <CompetitorWidget />
             </div>
 
-            <div className="section-divider" />
+            <div className="section-divider" data-internal-only />
 
-            <SectionHeader
-              number="06"
-              title="Skills"
-              subtitle={activeWidget === "All" ? "Catálogo completo de skills instaladas" : `Vista: ${activeWidget}`}
-            />
+            <div data-internal-only className="contents">
+              <SectionHeader
+                number="06"
+                title="Skills"
+                subtitle={activeWidget === "All" ? "Catálogo completo de skills instaladas" : `Vista: ${activeWidget}`}
+              />
+            </div>
             <div id="skills-catalog" className="col-12" data-internal-only>
               <SkillsCatalogWidget />
             </div>
 
-            <div data-internal-only>
-            <CollapsibleSection title="DATA & ANALYTICS" icon="📊" sectionId="data-analytics" defaultOpen={false}>
-              <div id="excel-widget"><ExcelWidget /></div>
-              <div id="google-news"><GoogleNewsWidget /></div>
-              <div id="google-maps"><GoogleMapsWidget /></div>
-              <div id="amazon-analyzer"><AmazonWidget /></div>
-              <div id="metricool"><MetricoolWidget /></div>
-            </CollapsibleSection>
+            <div className="col-12 flex flex-col gap-4" data-internal-only>
+              <CollapsibleSection title="DATA & ANALYTICS" icon="📊" sectionId="data-analytics" defaultOpen={false}>
+                <div id="excel-widget"><ExcelWidget /></div>
+                <div id="google-news"><GoogleNewsWidget /></div>
+                <div id="google-maps"><GoogleMapsWidget /></div>
+                <div id="amazon-analyzer"><AmazonWidget /></div>
+                <div id="metricool"><MetricoolWidget /></div>
+              </CollapsibleSection>
 
-            <CollapsibleSection title="RESEARCH" icon="🔍" sectionId="research" defaultOpen={false}>
-              <div id="web-research"><WebResearchWidget /></div>
-              <div id="firecrawl"><FirecrawlWidget /></div>
-              <div id="notebooklm"><NotebookLMWidget /></div>
-            </CollapsibleSection>
+              <CollapsibleSection title="RESEARCH" icon="🔍" sectionId="research" defaultOpen={false}>
+                <div id="web-research"><WebResearchWidget /></div>
+                <div id="firecrawl"><FirecrawlWidget /></div>
+                <div id="notebooklm"><NotebookLMWidget /></div>
+              </CollapsibleSection>
 
-            <CollapsibleSection title="DEV & QA" icon="⚙️" sectionId="dev-qa" defaultOpen={false}>
-              <div id="karpathy-rules"><KarpathyWidget /></div>
-              <div id="debugging"><DebuggingWidget /></div>
-              <div id="verification"><VerificationWidget /></div>
-              <div id="qa-auditor"><QAAuditorWidget /></div>
-              <div id="loop-mode"><LoopModeWidget /></div>
-              <div id="quality-loop"><QualityLoopWidget /></div>
-            </CollapsibleSection>
+              <CollapsibleSection title="DEV & QA" icon="⚙️" sectionId="dev-qa" defaultOpen={false}>
+                <div id="karpathy-rules"><KarpathyWidget /></div>
+                <div id="debugging"><DebuggingWidget /></div>
+                <div id="verification"><VerificationWidget /></div>
+                <div id="qa-auditor"><QAAuditorWidget /></div>
+                <div id="loop-mode"><LoopModeWidget /></div>
+                <div id="quality-loop"><QualityLoopWidget /></div>
+              </CollapsibleSection>
 
-            <CollapsibleSection title="CONTENT" icon="✍️" sectionId="content" defaultOpen={false}>
-              <div id="x-publisher"><XPublisherWidget /></div>
-              <div id="youtube-clip"><YouTubeClipperWidget /></div>
-              <div id="remotion"><RemotionWidget /></div>
-              <div id="cronograma"><CronogramaWidget /></div>
-            </CollapsibleSection>
+              <CollapsibleSection title="CONTENT" icon="✍️" sectionId="content" defaultOpen={false}>
+                <div id="x-publisher"><XPublisherWidget /></div>
+                <div id="youtube-clip"><YouTubeClipperWidget /></div>
+                <div id="remotion"><RemotionWidget /></div>
+                <div id="cronograma"><CronogramaWidget /></div>
+              </CollapsibleSection>
 
-            <CollapsibleSection title="STRATEGY" icon="🎯" sectionId="strategy" defaultOpen={false}>
-              <div id="brainstorming"><BrainstormingWidget /></div>
-              <div id="grill-me"><GrillMeWidget /></div>
-              <div id="writing-plans"><WritingPlansWidget /></div>
-              <div id="benchmarking"><BenchmarkingWidget /></div>
-              <div id="interface-designing"><InterfaceDesigningWidget /></div>
-            </CollapsibleSection>
+              <CollapsibleSection title="STRATEGY" icon="🎯" sectionId="strategy" defaultOpen={false}>
+                <div id="brainstorming"><BrainstormingWidget /></div>
+                <div id="grill-me"><GrillMeWidget /></div>
+                <div id="writing-plans"><WritingPlansWidget /></div>
+                <div id="benchmarking"><BenchmarkingWidget /></div>
+                <div id="interface-designing"><InterfaceDesigningWidget /></div>
+              </CollapsibleSection>
 
-            <CollapsibleSection title="META / SKILLS" icon="🧠" sectionId="meta-skills" defaultOpen={false}>
-              <div id="find-skills"><FindSkillsWidget /></div>
-              <div id="skill-builder"><SkillBuilderWidget /></div>
-              <div id="skill-creator"><SkillCreatorWidget /></div>
-              <div id="masters"><SkillFromMastersWidget /></div>
-              <div id="installer"><SkillInstallerWidget /></div>
-              <div id="mcp"><MCPWidget /></div>
-              <div id="a2a"><MultiAgentWidget /></div>
-              <div id="consulta"><ConsultaContextoWidget /></div>
-              <div id="superpowers"><SuperpowersWidget /></div>
-              <div id="orchestrator"><SkillOrchestratorWidget /></div>
-              <div id="warpgrep"><WarpgrepsWidget /></div>
-            </CollapsibleSection>
+              <CollapsibleSection title="META / SKILLS" icon="🧠" sectionId="meta-skills" defaultOpen={false}>
+                <div id="find-skills"><FindSkillsWidget /></div>
+                <div id="skill-builder"><SkillBuilderWidget /></div>
+                <div id="skill-creator"><SkillCreatorWidget /></div>
+                <div id="masters"><SkillFromMastersWidget /></div>
+                <div id="installer"><SkillInstallerWidget /></div>
+                <div id="mcp"><MCPWidget /></div>
+                <div id="a2a"><MultiAgentWidget /></div>
+                <div id="consulta"><ConsultaContextoWidget /></div>
+                <div id="superpowers"><SuperpowersWidget /></div>
+                <div id="orchestrator"><SkillOrchestratorWidget /></div>
+                <div id="warpgrep"><WarpgrepsWidget /></div>
+              </CollapsibleSection>
             </div>
 
+            <Footer />
           </div>
         </main>
       </div>
-      <Footer />
       <ChatbotWidget />
     </div>
   );

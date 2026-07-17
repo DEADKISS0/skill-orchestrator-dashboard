@@ -58,7 +58,7 @@ export default function CollapsibleSection({
         </span>
       </button>
       {isOpen && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 animate-in">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 animate-in">
           {children}
         </div>
       )}

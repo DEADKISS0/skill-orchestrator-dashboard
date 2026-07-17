@@ -1,32 +1,84 @@
 "use client";
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+
+const STORAGE_KEY = "rr-pitch-mode";
 
 interface PresentationModeContextValue {
   isPresentationMode: boolean;
   togglePresentationMode: () => void;
+  setPresentationMode: (value: boolean) => void;
 }
 
 const PresentationModeContext = createContext<PresentationModeContextValue>({
   isPresentationMode: false,
   togglePresentationMode: () => {},
+  setPresentationMode: () => {},
 });
 
 export function PresentationModeProvider({ children }: { children: ReactNode }) {
   const [isPresentationMode, setIsPresentationMode] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    try {
+      setIsPresentationMode(sessionStorage.getItem(STORAGE_KEY) === "1");
+    } catch {
+      /* ignore */
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     document.body.dataset.presentation = isPresentationMode ? "true" : "false";
+    try {
+      sessionStorage.setItem(STORAGE_KEY, isPresentationMode ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
     return () => {
       delete document.body.dataset.presentation;
     };
-  }, [isPresentationMode]);
+  }, [isPresentationMode, hydrated]);
+
+  const setPresentationMode = useCallback((value: boolean) => {
+    setIsPresentationMode(value);
+    if (value) {
+      requestAnimationFrame(() => {
+        document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, []);
+
+  const togglePresentationMode = useCallback(() => {
+    setIsPresentationMode((prev) => {
+      const next = !prev;
+      if (next) {
+        requestAnimationFrame(() => {
+          document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "p" && e.key !== "P") return;
+      const t = e.target as HTMLElement | null;
+      if (!t) return;
+      const tag = t.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || t.isContentEditable) return;
+      e.preventDefault();
+      togglePresentationMode();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [togglePresentationMode]);
 
   return (
     <PresentationModeContext.Provider
-      value={{
-        isPresentationMode,
-        togglePresentationMode: () => setIsPresentationMode((v) => !v),
-      }}
+      value={{ isPresentationMode, togglePresentationMode, setPresentationMode }}
     >
       {children}
     </PresentationModeContext.Provider>
