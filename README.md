@@ -34,24 +34,47 @@ Centro de comando interno de RR ALIADOS S.A.S. — Brutalismo Estratégico Colom
 
 ## Widgets de reportes IA
 
-| Widget | Índice JSON | Carpeta PDFs |
-|--------|-------------|--------------|
-| Predicciones | `/reports/predicciones_index.json` | `public/reports/` |
-| Estrategia | `/reports/estrategicos_index.json` | `public/reports/` |
+| Widget | Índice / fuente | Notas |
+|--------|-----------------|-------|
+| Predicciones | `/reports/predicciones_index.json` | PDF + KPIs |
+| Estrategia | `/reports/estrategicos_index.json` | Progreso calibrado |
+| Optimización temporal | `/optimizacion/reports_index.json` | Diario/semanal/mensual/dashboard |
+| Tablero de lectura rápida | `/data/action_ledger.json` + `/data/mirofish/*` | Matriz de acciones, progreso, charts |
+| Propuestas de Acción | `/api/action-proposals` | Cola read-only → DashWeb con confirmación |
+| Señales MiroFish | `/data/mirofish/patterns.json` | Actividad documental (no salud de negocio) |
 
 ## Pipeline
 
 ```
-enhanced_report.py → public/reports/ (+ predicciones_index.json)
-reporte_optimizacion_estrategica.py → public/reports/ (+ estrategicos_index.json, action_ledger.json)
+enhanced_report.py → public/reports/ + public/data/mirofish/
+optimization_report.py → public/optimizacion/
+reporte_optimizacion_estrategica.py → public/reports/ + action_ledger.json
          ↓
-scripts/sync_reports.ps1  (valida índices y artefactos publicados)
+scripts/sync_reports.ps1  (valida 3 índices + ledger + scan de secretos)
          ↓
 vercel deploy --prod --yes
          ↓
 https://rr-aliados-mega-dashboard.vercel.app/
 ```
 
+### Gate de embeds (ecosistema)
+
+Antes de desplegar (o justo después en prod):
+
+```powershell
+npm run check:embeds
+# o: .\scripts\check_ecosystem_embeds.ps1 -BaseUrl https://rr-aliados-mega-dashboard.vercel.app
+```
+
+Consulta `GET /api/ecosystem/embed-check` y falla (exit 1) si alguna app con `embed: iframe|auto` tiene hard-block de framing. Company Hub / Adquisición / DashWeb ahora intentan iframe (`auto`); si el host bloquea en runtime, caen a tarjeta con CTA Abrir.
+
+### DashWeb Core (CRM)
+
+- Única fuente de verdad de proyectos, tareas y participantes.
+- Credenciales solo servidor: `DASHWEB_API_URL`, `DASHWEB_SERVICE_TOKEN`.
+- Flujo: propuesta → selector de proyecto → confirmación individual → tarea **sin asignado** → asignación en diálogo separado.
+- Matching primario por `sourceActionId`; el match por título es sugerencia y requiere confirmación.
+- Datos demo/test se excluyen por defecto de listados y sugerencias.
 ## Desarrollo local
 
 ```bash
@@ -100,11 +123,16 @@ Sin credenciales, GA/Calendar/Metricool muestran badge **DEMO/Mock**. Sin `MIROF
 .\scripts\sync_reports.ps1
 ```
 
+Aceptación end-to-end (local + prod):
+
+```bash
+python "G:\Mi unidad\RR_Aliados\05_IA_Herramientas\mirofish_lite\verify_report_crm.py"
+```
 ### Cron (Windows Task Scheduler)
 
 | Campo | Valor |
 |-------|--------|
-| Trigger | Diario 06:00 y 18:00 (tras MiroFish) |
+| Trigger | Diario tras MiroFish (recomendado 05:30 / 17:30) |
 | Programa | `powershell.exe` |
 | Argumentos | `-NoProfile -ExecutionPolicy Bypass -File "G:\Mi unidad\RR_Aliados\skill-orchestrator-dashboard\scripts\sync_reports.ps1"` |
 | Después | `vercel deploy --prod --yes` |

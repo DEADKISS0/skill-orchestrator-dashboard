@@ -98,15 +98,20 @@ export default function Header({
               border: "1px solid var(--border)",
               color: "var(--ember-light)",
             }}
-            title={openMode ? "AUTH_SECRET no configurado" : "Rol de sesión"}
+            title={
+              openMode
+                ? "Modo abierto: AUTH_SECRET no está en Vercel. Vista Ops completa sin login."
+                : `Sesión activa · rol ${role}. Cambia con login (/login).`
+            }
+            aria-label={openMode ? "Modo open/ops sin autenticación" : `Rol ${role}`}
           >
-            {openMode ? "open/ops" : role}
+            {openMode ? "OPEN/OPS" : String(role).toUpperCase()}
           </span>
           {!forcesPitch && (
             <button
               onClick={onPitchClick}
               className="btn-ghost !py-1.5 !px-2.5 hidden sm:inline-flex"
-              title="Modo presentación para cliente o inversor (atajo: P)"
+              title="Oculta tools internas para presentar a cliente/inversor (atajo P). Genera Pack Pitch desde la barra."
               aria-pressed={isPresentationMode}
             >
               {isPresentationMode ? "Salir del Pitch" : "Modo Pitch"}
@@ -119,18 +124,26 @@ export default function Header({
           )}
           <NotificationCenter />
           <ThemeToggle />
-          <div
+          <button
+            type="button"
             className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg"
             style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)" }}
+            title="Skills instaladas — ir al catálogo"
+            aria-label={`${STATS.installed} skills activas`}
+            onClick={() => {
+              const el = document.getElementById("skills-catalog");
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
           >
             <div className="pulse-dot" />
             <span className="font-mono-label" style={{ color: "var(--success)" }}>
               {STATS.installed} activas
             </span>
-          </div>
+          </button>
           <div
             className="hidden lg:flex items-center font-mono-label px-3 py-1.5 rounded-lg"
             style={{ background: "var(--void-30)", color: "var(--text-muted)", border: "1px solid var(--border)" }}
+            title="Total de skills en el catálogo"
           >
             {STATS.total} total
           </div>

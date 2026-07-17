@@ -6,14 +6,14 @@ import type { EcosystemApp } from "@/data/ecosystemApps";
 
 type LoadState = "loading" | "loaded" | "timeout" | "error" | "card";
 
-const LOAD_TIMEOUT_MS = 12000;
+const LOAD_TIMEOUT_MS = 14000;
 
 interface Props {
   app: EcosystemApp;
 }
 
 export default function ExternalAppWidget({ app }: Props) {
-  const { title, url, icon, blurb, embed } = app;
+  const { title, url, icon, blurb, embed, embedNote } = app;
   const forceCard = embed === "card";
   const [src, setSrc] = useState<string | undefined>(undefined);
   const [state, setState] = useState<LoadState>(forceCard ? "card" : "loading");
@@ -44,7 +44,6 @@ export default function ExternalAppWidget({ app }: Props) {
 
   useEffect(() => {
     if (forceCard) return;
-    // Cargar de inmediato (evita "Cargando…" eterno si el grid está fuera de viewport)
     setInView(true);
     const el = wrapRef.current;
     if (!el) return;
@@ -82,7 +81,6 @@ export default function ExternalAppWidget({ app }: Props) {
   const markLoaded = useCallback(() => setState("loaded"), []);
 
   const retry = () => {
-    if (forceCard) return;
     setSrc(undefined);
     setState("loading");
     setRetryKey((k) => k + 1);
@@ -96,12 +94,17 @@ export default function ExternalAppWidget({ app }: Props) {
     alive === "up" ? "var(--success)" : alive === "down" ? "var(--danger)" : "var(--ash)";
 
   const frameH = expanded ? "min(75vh, 780px)" : undefined;
+  const fallbackHint =
+    embedNote ||
+    (forceCard
+      ? "Vista rápida · abrir en pestaña para la app completa"
+      : "Preview no disponible aquí · ábrela en pestaña");
 
   return (
     <WidgetCard
       title={title}
       icon={icon}
-      badge={showCard ? "Abrir" : state === "loaded" ? "Live" : "…"}
+      badge={showCard ? "Pestaña" : state === "loaded" ? "Live" : "…"}
       badgeVariant="support"
       action={
         <div className="flex items-center gap-1">
@@ -112,6 +115,11 @@ export default function ExternalAppWidget({ app }: Props) {
               onClick={() => setExpanded((v) => !v)}
             >
               {expanded ? "−" : "+"}
+            </button>
+          )}
+          {showCard && !forceCard && (
+            <button type="button" className="btn-ghost !py-1 !px-2 text-[10px]" onClick={retry}>
+              Embed
             </button>
           )}
           <a href={url} target="_blank" rel="noopener noreferrer" className="btn-ghost !py-1 !px-2">
@@ -125,8 +133,8 @@ export default function ExternalAppWidget({ app }: Props) {
         className="app-preview relative rounded-lg overflow-hidden"
         style={{
           border: "1px solid var(--border-subtle)",
-          height: frameH || (showCard ? 280 : 420),
-          minHeight: showCard ? 280 : 420,
+          height: frameH || (showCard ? 300 : 440),
+          minHeight: showCard ? 300 : 440,
         }}
       >
         {showCard ? (
@@ -150,28 +158,10 @@ export default function ExternalAppWidget({ app }: Props) {
               <span className="inline-block w-2 h-2 rounded-full" style={{ background: statusDot }} />
               {alive === "up" ? "Online" : alive === "down" ? "Sin respuesta" : "Estado n/d"}
             </div>
-            <span className="btn-primary !py-2 !px-4 text-xs pointer-events-none">
-              {forceCard ? "Abrir en nueva pestaña ↗" : "Abrir aplicación ↗"}
-            </span>
+            <span className="btn-primary !py-2 !px-4 text-xs pointer-events-none">Abrir en nueva pestaña ↗</span>
             <p className="text-[10px] max-w-xs" style={{ color: "var(--ash)" }}>
-              {forceCard
-                ? "Esta app no se embebe (auth o host). Usa Abrir para verla completa."
-                : "Si el embed falla, usa Abrir o Vista tarjeta."}
+              {fallbackHint}
             </p>
-            {!forceCard && (
-              <button
-                type="button"
-                className="btn-ghost !py-1 !px-3 text-[10px]"
-                style={{ color: "var(--ash)" }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  retry();
-                }}
-              >
-                Reintentar embed
-              </button>
-            )}
           </a>
         ) : (
           <>
@@ -192,7 +182,7 @@ export default function ExternalAppWidget({ app }: Props) {
                   {(state === "timeout" || state === "error") && (
                     <>
                       <p className="text-sm font-mono-label mb-3">
-                        {state === "error" ? `No se pudo cargar ${title}` : `${title} no embebe`}
+                        {state === "error" ? `No se pudo cargar ${title}` : `${title}: embed lento o bloqueado`}
                       </p>
                       <div className="flex flex-wrap gap-2 justify-center">
                         <button type="button" className="btn-ghost !py-1 !px-3" onClick={retry}>
