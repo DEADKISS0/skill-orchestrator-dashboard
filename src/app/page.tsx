@@ -54,6 +54,7 @@ import MiroFishReportsWidget from "@/components/MiroFishReportsWidget";
 import MiroFishSignalsWidget from "@/components/MiroFishSignalsWidget";
 import ReportesEstrategicosWidget from "@/components/ReportesEstrategicosWidget";
 import ActionProposalWidget from "@/components/ActionProposalWidget";
+import ReportInsightBoard from "@/components/ReportInsightBoard";
 import SalesPipelineWidget from "@/components/SalesPipelineWidget";
 import FinancialHealthWidget from "@/components/FinancialHealthWidget";
 import ClientStatusWidget from "@/components/ClientStatusWidget";
@@ -136,6 +137,9 @@ export default function Home() {
             </div>
             <div id="estrategia" className="col-6">
               <ReportesEstrategicosWidget />
+            </div>
+            <div id="report-insights" className="col-12">
+              <ReportInsightBoard />
             </div>
             <div id="action-proposals" className="col-12">
               <ActionProposalWidget />

@@ -47,3 +47,6 @@ next-env.d.ts
 .env*
 
 desktop.ini
+
+# Temporal Optimización reports were retired — never re-upload
+/public/optimizacion/
