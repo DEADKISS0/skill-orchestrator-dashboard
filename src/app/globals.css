@@ -410,6 +410,15 @@ body {
   .apps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+@media (min-width: 1200px) {
+  .apps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--grid-gap); }
+}
+
+.apps-grid .report-iframe {
+  height: 360px;
+  min-height: 360px;
+}
+
 /* ── Sidebar nav ── */
 .nav-item {
   width: 100%;

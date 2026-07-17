@@ -20,12 +20,14 @@ interface ReportEntry {
   };
 }
 
+/** Cotizador / panel denso de predicciones — KPIs primero, preview compacto. */
 export default function MiroFishReportsWidget() {
   const [reports, setReports] = useState<ReportEntry[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showPreview, setShowPreview] = useState(false);
 
   const selectedReport = reports[selectedIndex] ?? null;
 
@@ -41,9 +43,7 @@ export default function MiroFishReportsWidget() {
         setSelectedIndex(0);
         setLastUpdate(new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }));
       })
-      .catch(() => {
-        setReports([]);
-      })
+      .catch(() => setReports([]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -55,25 +55,25 @@ export default function MiroFishReportsWidget() {
 
   if (loading && reports.length === 0) {
     return (
-      <WidgetCard title="Predicciones — MiroFish-Lite" icon="📊">
-        <div className="skeleton-ember h-8 w-48 mb-3" />
-        <div className="skeleton-ember h-9 w-full mb-3" />
-        <div className="skeleton-ember report-iframe rounded-lg" />
-        <div className="flex gap-2 mt-3">
-          <div className="skeleton-ember h-8 w-20" />
-          <div className="skeleton-ember h-8 w-20" />
+      <WidgetCard title="Cotizador Predicciones" icon="📊">
+        <div className="skeleton-ember h-8 w-40 mb-2" />
+        <div className="grid grid-cols-3 gap-2 mb-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="skeleton-ember h-14 rounded" />
+          ))}
         </div>
       </WidgetCard>
     );
   }
 
+  const s = selectedReport?.summary;
   const archivedCount = Math.max(0, reports.length - 3);
 
   return (
     <WidgetCard
-      title="Predicciones — MiroFish-Lite"
+      title="Cotizador Predicciones"
       icon="📊"
-      badge={archivedCount > 0 ? `${reports.length} (${archivedCount} arch.)` : `${reports.length} reportes`}
+      badge={archivedCount > 0 ? `${reports.length} rpt` : `${reports.length}`}
       badgeVariant="active"
       action={
         <div className="flex items-center gap-1">
@@ -82,83 +82,108 @@ export default function MiroFishReportsWidget() {
             onClick={() => setRefreshKey((k) => k + 1)}
             className="btn-ghost !py-1 !px-2"
             title="Actualizar"
-            aria-label="Actualizar reportes de predicciones"
+            aria-label="Actualizar predicciones"
           >
             ↻
           </button>
         </div>
       }
     >
-      {selectedReport?.heuristic && (
-        <span className="skill-badge heuristic mb-2 inline-flex" title="Generado sin IA conectada">
-          Modo heurístico
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        {selectedReport?.heuristic ? (
+          <span className="skill-badge heuristic">Heurístico</span>
+        ) : selectedReport ? (
+          <span className="skill-badge active">IA</span>
+        ) : null}
+        <span className="font-mono-label text-[10px]" style={{ color: "var(--text-muted)" }}>
+          {selectedReport?.label || "Sin reporte"}
+          {lastUpdate ? ` · ${lastUpdate}` : ""}
         </span>
-      )}
-      {!selectedReport?.heuristic && selectedReport && (
-        <span className="skill-badge active mb-2 inline-flex">Generado con IA</span>
-      )}
+      </div>
 
       <ReportSelector
         reports={reports}
         selectedDate={selectedReport?.date ?? null}
-        onSelect={setSelectedIndex}
+        onSelect={(i) => {
+          setSelectedIndex(i);
+          setShowPreview(false);
+        }}
         maxRecent={3}
       />
 
-      {selectedReport && (
-        <div className="space-y-3">
-          {selectedReport.pdf && (
-            <iframe
-              src={selectedReport.pdf}
-              className="w-full rounded-lg border report-iframe"
-              style={{ borderColor: "var(--border)", background: "var(--bg-secondary)" }}
-              title="Reporte PDF"
-            />
-          )}
-
-          <div className="flex gap-2 flex-wrap">
-            {selectedReport.pdf && (
-              <a href={selectedReport.pdf} download className="btn-primary text-xs">
-                📄 PDF
-              </a>
-            )}
-            {selectedReport.excel && (
-              <a href={selectedReport.excel} download className="btn-primary text-xs" style={{ background: "var(--success)" }}>
-                📊 Excel
-              </a>
-            )}
-          </div>
-
-          {selectedReport.summary && (
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-              {[
-                { label: "Cambios", value: selectedReport.summary.total_changes, color: "var(--ember)" },
-                { label: "Tendencias", value: selectedReport.summary.trends, color: "var(--warning)" },
-                { label: "Anomalías", value: selectedReport.summary.anomalies, color: "var(--danger)" },
-                { label: "Riesgos", value: selectedReport.summary.risks, color: "var(--danger)" },
-                { label: "Oportunidades", value: selectedReport.summary.opportunities, color: "var(--success)" },
-                { label: "Acciones", value: selectedReport.summary.next_actions, color: "var(--ember)" },
-              ].map((m) => (
-                <div key={m.label} className="p-2 rounded text-center" style={{ background: "var(--bg-secondary)" }}>
-                  <div className="text-lg font-bold" style={{ color: m.color }}>{m.value ?? "—"}</div>
-                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>{m.label}</div>
-                </div>
-              ))}
+      {selectedReport && s && (
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 mb-2">
+          {[
+            { label: "Cambios", value: s.total_changes, color: "var(--ember)" },
+            { label: "Tend.", value: s.trends, color: "var(--warning)" },
+            { label: "Anom.", value: s.anomalies, color: "var(--danger)" },
+            { label: "Riesgos", value: s.risks, color: "var(--danger)" },
+            { label: "Oport.", value: s.opportunities, color: "var(--success)" },
+            { label: "Acciones", value: s.next_actions, color: "var(--ember)" },
+          ].map((m) => (
+            <div
+              key={m.label}
+              className="py-1.5 px-1 rounded text-center"
+              style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)" }}
+            >
+              <div className="font-display text-base leading-none" style={{ color: m.color }}>
+                {m.value ?? "—"}
+              </div>
+              <div className="text-[9px] mt-0.5 font-mono-label" style={{ color: "var(--text-muted)" }}>
+                {m.label}
+              </div>
             </div>
+          ))}
+        </div>
+      )}
+
+      {selectedReport && (
+        <div className="flex gap-2 flex-wrap items-center mb-2">
+          {selectedReport.pdf && (
+            <a href={selectedReport.pdf} download className="btn-primary !py-1 !px-2.5 text-[11px]">
+              📄 PDF
+            </a>
+          )}
+          {selectedReport.excel && (
+            <a
+              href={selectedReport.excel}
+              download
+              className="btn-primary !py-1 !px-2.5 text-[11px]"
+              style={{ background: "var(--success)" }}
+            >
+              📊 Excel
+            </a>
+          )}
+          {selectedReport.pdf && (
+            <button
+              type="button"
+              className="btn-ghost !py-1 !px-2.5 text-[11px]"
+              onClick={() => setShowPreview((v) => !v)}
+            >
+              {showPreview ? "Ocultar preview" : "Preview PDF"}
+            </button>
           )}
         </div>
+      )}
+
+      {showPreview && selectedReport?.pdf && (
+        <iframe
+          src={selectedReport.pdf}
+          className="w-full rounded-lg border"
+          style={{
+            borderColor: "var(--border)",
+            background: "var(--bg-secondary)",
+            height: 280,
+            minHeight: 280,
+          }}
+          title="Preview predicciones"
+        />
       )}
 
       {!selectedReport && (
-        <div className="p-8 text-center" style={{ color: "var(--text-muted)" }}>
-          <p className="text-sm mb-3">No hay reportes generados aún.</p>
+        <div className="py-4 text-center" style={{ color: "var(--text-muted)" }}>
+          <p className="text-xs mb-2">Sin reportes. Regenera con MiroFish-Lite.</p>
           <RegenerarReportButton variant="predicciones" />
-        </div>
-      )}
-
-      {lastUpdate && (
-        <div className="mt-2 text-[10px] text-right font-mono-label" style={{ color: "var(--text-muted)" }}>
-          Actualizado: {lastUpdate}
         </div>
       )}
     </WidgetCard>

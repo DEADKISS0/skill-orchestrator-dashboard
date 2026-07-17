@@ -20,10 +20,13 @@ export default function EcosystemAppsGrid() {
           </a>
         ))}
       </div>
+      <p className="text-[10px] font-mono-label" style={{ color: "var(--text-muted)" }}>
+        Preview: embed cuando el sitio lo permite · si no, tarjeta con estado + abrir en pestaña (sin iframe vacío).
+      </p>
       <div className="apps-grid">
         {ECOSYSTEM_APPS.map((a) => (
           <div key={a.id} id={a.id}>
-            <ExternalAppWidget title={a.title} url={a.url} icon={a.icon} />
+            <ExternalAppWidget app={a} />
           </div>
         ))}
       </div>

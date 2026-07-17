@@ -220,8 +220,10 @@ export async function GET() {
 
   const ecosystemTargets = [
     { id: "cotizador", name: "RR Cotizador", url: "https://rr-kotizador.vercel.app/" },
-    { id: "skills-hub", name: "Skills Hub", url: "https://rr-skills-hub.vercel.app/" },
+    { id: "skills-hub-app", name: "Skills Hub", url: "https://rr-skills-hub.vercel.app/" },
     { id: "adq-talentos", name: "Adq. Talento", url: "https://rr-adq-talentos.vercel.app/" },
+    { id: "altruismo", name: "Altruismo", url: "https://altruismo-web.vercel.app/es" },
+    { id: "saas-vertical", name: "SaaS Vertical", url: "https://rr-saas-vertical.vercel.app/" },
   ];
 
   const ecoJobs = await Promise.all(
