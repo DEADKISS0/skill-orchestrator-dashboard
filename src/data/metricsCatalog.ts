@@ -1,5 +1,41 @@
 import { getBusinessContext } from "./businessContext";
 
+/** Parse report index date (e.g. "2026-07-17_0519") to Date at noon local. */
+export function parseReportDate(raw?: string): Date | null {
+  if (!raw) return null;
+  const datePart = raw.split("_")[0];
+  const parsed = new Date(`${datePart}T12:00:00`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+/** Human-readable age from the latest predicciones_index entry. */
+export function formatRelativeReportAge(latestDate?: string): string {
+  const parsed = parseReportDate(latestDate);
+  if (!parsed) return "Sin reportes recientes";
+
+  const diffDays = Math.floor((Date.now() - parsed.getTime()) / 86_400_000);
+  if (diffDays <= 0) return "Hoy";
+  if (diffDays === 1) return "Ayer";
+  if (diffDays < 7) return `Hace ${diffDays}d`;
+  if (diffDays < 14) return "Hace 1 sem";
+  const weeks = Math.floor(diffDays / 7);
+  return weeks === 1 ? "Hace 1 sem" : `Hace ${weeks} sem`;
+}
+
+/** Count report entries whose date falls within the last 7 days. */
+export function countReportsThisWeek(dates: string[]): number {
+  const cutoff = Date.now() - 7 * 86_400_000;
+  return dates.filter((d) => {
+    const parsed = parseReportDate(d);
+    return parsed !== null && parsed.getTime() >= cutoff;
+  }).length;
+}
+
+export interface ReportTrendContext {
+  latestPredictionDate?: string;
+  predictionDates?: string[];
+}
+
 export interface Metric {
   id: string;
   label: string;
@@ -16,9 +52,20 @@ export function getMetrics(
   strategicReports: number,
   installedSkills: number,
   totalSkills: number,
-  optimizationReports = 0
+  optimizationReports = 0,
+  reportTrend?: ReportTrendContext
 ): Metric[] {
   const ctx = getBusinessContext();
+  const thisWeek = reportTrend?.predictionDates
+    ? countReportsThisWeek(reportTrend.predictionDates)
+    : undefined;
+  const latestAge = formatRelativeReportAge(reportTrend?.latestPredictionDate);
+  const reportsTrendValue =
+    thisWeek !== undefined && thisWeek > 0
+      ? `+${thisWeek} esta semana · ${latestAge}`
+      : predictionReports > 0
+        ? `${predictionReports} predicciones · ${latestAge}`
+        : latestAge;
 
   return [
     {
@@ -28,8 +75,8 @@ export function getMetrics(
       value: predictionReports + strategicReports + optimizationReports,
       subtitle: `${predictionReports} pred · ${strategicReports} estr · ${optimizationReports} opt`,
       color: "var(--ember)",
-      trend: predictionReports > 0 ? "up" : "stable",
-      trendValue: predictionReports > 0 ? `${predictionReports} predicciones` : "Sin nuevos",
+      trend: (thisWeek ?? 0) > 0 || predictionReports > 0 ? "up" : "stable",
+      trendValue: reportsTrendValue,
     },
     {
       id: "skills",
@@ -59,7 +106,7 @@ export function getMetrics(
       subtitle: "Días de caja restantes",
       color: ctx.runwayDays < 90 ? "var(--danger)" : "var(--success)",
       trend: ctx.runwayDays < 90 ? "down" : "stable",
-      trendValue: `Burn ~$450K/mes`,
+      trendValue: `Burn ~${Math.round(ctx.monthlyBurnCop / 1000)}K/mes`,
     },
     {
       id: "apps",

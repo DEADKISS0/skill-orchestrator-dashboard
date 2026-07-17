@@ -114,8 +114,12 @@ export default function GlobalSearch() {
       onClick={() => setIsOpen(false)}
     >
       <div
-        className="w-full max-w-xl rounded-xl shadow-2xl overflow-hidden glass-panel"
-        style={{ boxShadow: "var(--shadow-ember)" }}
+        className="w-full max-w-xl rounded-xl shadow-2xl overflow-hidden"
+        style={{
+          background: "var(--pitch-95)",
+          border: "1px solid var(--ember-30)",
+          boxShadow: "var(--shadow-ember)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: "var(--border)" }}>

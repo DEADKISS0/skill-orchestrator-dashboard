@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import WidgetCard from "@/components/ui/WidgetCard";
 import ReportSelector from "@/components/ui/ReportSelector";
+import RegenerarReportButton from "@/components/ui/RegenerarReportButton";
 
 interface ReportEntry {
   date: string;
@@ -55,8 +56,13 @@ export default function MiroFishReportsWidget() {
   if (loading && reports.length === 0) {
     return (
       <WidgetCard title="Predicciones — MiroFish-Lite" icon="📊">
-        <div className="skeleton-shimmer h-8 w-48 rounded mb-2" />
-        <div className="skeleton-shimmer h-64 rounded" />
+        <div className="skeleton-ember h-8 w-48 mb-3" />
+        <div className="skeleton-ember h-9 w-full mb-3" />
+        <div className="skeleton-ember report-iframe rounded-lg" />
+        <div className="flex gap-2 mt-3">
+          <div className="skeleton-ember h-8 w-20" />
+          <div className="skeleton-ember h-8 w-20" />
+        </div>
       </WidgetCard>
     );
   }
@@ -70,9 +76,17 @@ export default function MiroFishReportsWidget() {
       badge={archivedCount > 0 ? `${reports.length} (${archivedCount} arch.)` : `${reports.length} reportes`}
       badgeVariant="active"
       action={
-        <button onClick={() => setRefreshKey((k) => k + 1)} className="btn-ghost !py-1 !px-2" title="Actualizar">
-          ↻
-        </button>
+        <div className="flex items-center gap-1">
+          <RegenerarReportButton variant="predicciones" />
+          <button
+            onClick={() => setRefreshKey((k) => k + 1)}
+            className="btn-ghost !py-1 !px-2"
+            title="Actualizar"
+            aria-label="Actualizar reportes de predicciones"
+          >
+            ↻
+          </button>
+        </div>
       }
     >
       {selectedReport?.heuristic && (
@@ -137,7 +151,8 @@ export default function MiroFishReportsWidget() {
 
       {!selectedReport && (
         <div className="p-8 text-center" style={{ color: "var(--text-muted)" }}>
-          <p className="text-sm">No hay reportes generados aún.</p>
+          <p className="text-sm mb-3">No hay reportes generados aún.</p>
+          <RegenerarReportButton variant="predicciones" />
         </div>
       )}
 

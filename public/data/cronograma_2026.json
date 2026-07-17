@@ -1,0 +1,13 @@
+{
+  "source": "RR_MASTER_CRONOGRAMA_2026.md (subset — source file not found, derived from businessContext)",
+  "year": 2026,
+  "milestones": [
+    { "date": "2026-01-15", "title": "Kickoff Q1 — alineación estratégica RR ALIADOS", "status": "completed" },
+    { "date": "2026-03-01", "title": "Catálogo 36 skills instaladas y sync_skills.py operativo", "status": "completed" },
+    { "date": "2026-04-30", "title": "Mega Dashboard v1 — widgets core en producción", "status": "completed" },
+    { "date": "2026-06-15", "title": "Pipeline Wuunder — propuesta comercial enviada", "status": "in_progress" },
+    { "date": "2026-07-31", "title": "Deadline Wuunder — cierre o pivot", "status": "pending" },
+    { "date": "2026-09-30", "title": "Meta Q3: 3 clientes cerrados (supervivencia 2026)", "status": "pending" },
+    { "date": "2026-12-31", "title": "MRR $12M COP/mes — hito fundacional", "status": "pending" }
+  ]
+}

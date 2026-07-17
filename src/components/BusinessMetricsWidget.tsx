@@ -15,13 +15,20 @@ export default function BusinessMetricsWidget() {
         fetch("/reports/estrategicos_index.json").then(r => r.json()).catch(() => ({ reports: [] })),
         fetch("/optimizacion/reports_index.json").then(r => r.json()).catch(() => ({ reports: {} })),
       ]);
-      const predCount = predRes.reports?.length || 0;
+      const predReports = predRes.reports || [];
+      const predCount = predReports.length;
+      const predDates: string[] = predReports.map((r: { date?: string }) => r.date).filter(Boolean);
       const stratCount = stratRes.reports?.length || 0;
       const optReports = optRes.reports || {};
       const optCount = Object.values(optReports as Record<string, unknown[]>).reduce(
         (a, b) => a + (Array.isArray(b) ? b.length : 0), 0
       );
-      setMetrics(getMetrics(predCount, stratCount, STATS.installed, STATS.total, optCount));
+      setMetrics(
+        getMetrics(predCount, stratCount, STATS.installed, STATS.total, optCount, {
+          latestPredictionDate: predDates[0],
+          predictionDates: predDates,
+        })
+      );
       setLastUpdate(new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }));
     } catch (e) {
       setMetrics(getMetrics(0, 0, STATS.installed, STATS.total));

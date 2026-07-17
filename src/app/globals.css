@@ -254,6 +254,21 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
+.skeleton-ember {
+  background: linear-gradient(
+    90deg,
+    var(--void-30) 0%,
+    var(--ember-10) 35%,
+    var(--ember-20) 50%,
+    var(--ember-10) 65%,
+    var(--void-30) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border: 1px solid var(--ember-10);
+  border-radius: var(--radius-sm);
+}
+
 /* ── Form controls ── */
 .input-dark {
   background: var(--bg-secondary);
@@ -466,7 +481,7 @@ body[data-presentation="true"] .dashboard-grid {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-in, .card:hover, .pulse-dot, .skeleton-shimmer {
+  .animate-in, .card:hover, .pulse-dot, .skeleton-shimmer, .skeleton-ember {
     animation: none;
     transform: none;
   }

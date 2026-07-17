@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Color palette from optimization_report.py (Brutalismo Estrategico Colombiano)
-const COLORS = {
-  PITCH: [15, 15, 15],
-  PITCH_80: [38, 38, 38],
-  VOID: [63, 0, 53],
-  EMBER: [206, 61, 31],
-  PARCHMENT: [245, 230, 211],
-  ASH: [150, 142, 147],
-  EMERALD: [46, 204, 113],
-  AMBER: [243, 156, 18],
-};
+// RR brand colors — Brutalismo Estratégico Colombiano
+const BRAND = {
+  PITCH: "#0F0F0F",
+  EMBER: "#CE3D1F",
+  PARCHMENT: "#F5E6D3",
+  VOID: "#3F0035",
+  ASH: "#968E93",
+} as const;
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,55 +52,55 @@ function generateHTMLReport(title: string, sections: { title: string; content: s
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', Arial, sans-serif;
-      background: #0F0F0F;
-      color: #F5E6D3;
+      background: ${BRAND.PITCH};
+      color: ${BRAND.PARCHMENT};
       line-height: 1.6;
     }
     .cover {
-      background: linear-gradient(135deg, #0F0F0F 0%, #3F0035 100%);
+      background: linear-gradient(135deg, ${BRAND.PITCH} 0%, ${BRAND.VOID} 100%);
       padding: 40px;
       text-align: center;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      border-bottom: 4px solid #CE3D1F;
+      border-bottom: 4px solid ${BRAND.EMBER};
     }
     .cover h1 {
       font-size: 36px;
-      color: #F5E6D3;
+      color: ${BRAND.PARCHMENT};
       margin-bottom: 10px;
       letter-spacing: 2px;
     }
     .cover .subtitle {
       font-size: 18px;
-      color: #CE3D1F;
+      color: ${BRAND.EMBER};
       margin-bottom: 20px;
     }
     .cover .company {
       font-size: 14px;
-      color: #968E93;
+      color: ${BRAND.ASH};
       margin-top: 30px;
     }
     .cover .date {
       font-size: 12px;
-      color: #968E93;
+      color: ${BRAND.ASH};
       margin-top: 10px;
     }
     .section {
       padding: 30px 40px;
-      border-bottom: 2px solid #3F0035;
+      border-bottom: 2px solid ${BRAND.VOID};
     }
     .section h2 {
       font-size: 20px;
-      color: #CE3D1F;
+      color: ${BRAND.EMBER};
       margin-bottom: 15px;
       padding-bottom: 5px;
-      border-bottom: 2px solid #CE3D1F;
+      border-bottom: 2px solid ${BRAND.EMBER};
     }
     .section .content {
       font-size: 14px;
-      color: #F5E6D3;
+      color: ${BRAND.PARCHMENT};
       line-height: 1.8;
     }
     .section .content p {
@@ -117,18 +114,18 @@ function generateHTMLReport(title: string, sections: { title: string; content: s
       margin-bottom: 8px;
     }
     .section .content strong {
-      color: #CE3D1F;
+      color: ${BRAND.EMBER};
     }
     .footer {
-      background: #0F0F0F;
+      background: ${BRAND.PITCH};
       padding: 20px 40px;
       text-align: center;
       font-size: 11px;
-      color: #968E93;
-      border-top: 2px solid #3F0035;
+      color: ${BRAND.ASH};
+      border-top: 2px solid ${BRAND.VOID};
     }
     @media print {
-      body { background: #0F0F0F !important; color: #F5E6D3 !important; }
+      body { background: ${BRAND.PITCH} !important; color: ${BRAND.PARCHMENT} !important; }
       .cover { page-break-after: always; }
     }
   </style>

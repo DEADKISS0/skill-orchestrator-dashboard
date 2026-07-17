@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import WidgetCard from "@/components/ui/WidgetCard";
 import ReportSelector from "@/components/ui/ReportSelector";
+import RegenerarReportButton from "@/components/ui/RegenerarReportButton";
 
 interface EstrategicoEntry {
   date: string;
@@ -50,7 +51,13 @@ export default function ReportesEstrategicosWidget() {
   if (loading && reports.length === 0) {
     return (
       <WidgetCard title="Optimización Estratégica" icon="🎯">
-        <p className="text-xs" style={{ color: "var(--text-muted)" }}>Cargando reportes...</p>
+        <div className="skeleton-ember h-8 w-48 mb-3" />
+        <div className="skeleton-ember h-9 w-full mb-3" />
+        <div className="skeleton-ember report-iframe rounded-lg" />
+        <div className="flex gap-2 mt-3">
+          <div className="skeleton-ember h-8 w-20" />
+          <div className="skeleton-ember h-8 w-20" />
+        </div>
       </WidgetCard>
     );
   }
@@ -64,9 +71,17 @@ export default function ReportesEstrategicosWidget() {
       badge={archivedCount > 0 ? `${reports.length} (${archivedCount} arch.)` : `${reports.length} reportes`}
       badgeVariant="active"
       action={
-        <button onClick={() => setRefreshKey((k) => k + 1)} className="btn-ghost !py-1 !px-2" title="Actualizar">
-          ↻
-        </button>
+        <div className="flex items-center gap-1">
+          <RegenerarReportButton variant="estrategicos" />
+          <button
+            onClick={() => setRefreshKey((k) => k + 1)}
+            className="btn-ghost !py-1 !px-2"
+            title="Actualizar"
+            aria-label="Actualizar reportes estratégicos"
+          >
+            ↻
+          </button>
+        </div>
       }
     >
       {selectedReport?.heuristic && (
@@ -126,10 +141,8 @@ export default function ReportesEstrategicosWidget() {
 
       {!selectedReport && (
         <div className="p-8 text-center" style={{ color: "var(--text-muted)" }}>
-          <p className="text-sm mb-2">No hay reportes estratégicos generados aún.</p>
-          <p className="text-xs font-mono-label">
-            Regenerar vía MiroFish-Lite → luego <code>scripts/sync_reports.ps1</code>
-          </p>
+          <p className="text-sm mb-3">No hay reportes estratégicos generados aún.</p>
+          <RegenerarReportButton variant="estrategicos" />
         </div>
       )}
 
